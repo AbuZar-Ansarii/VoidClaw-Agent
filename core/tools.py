@@ -7,6 +7,10 @@ class ToolManager:
         self.workspace_dir = os.path.abspath(workspace_dir)
         if not os.path.exists(self.workspace_dir):
             os.makedirs(self.workspace_dir)
+        self.agent = None
+
+    def set_agent(self, agent):
+        self.agent = agent
 
     def execute_tool(self, tool_name, args):
         tools = {
@@ -25,7 +29,10 @@ class ToolManager:
             "python_sandbox": self.python_sandbox,
             "download_youtube": self.download_youtube,
             "convert_media": self.convert_media,
-            "local_rag_search": self.local_rag_search
+            "local_rag_search": self.local_rag_search,
+            "schedule_task": self.schedule_task,
+            "list_tasks": self.list_tasks,
+            "remove_task": self.remove_task
         }
         if tool_name in tools:
             return tools[tool_name](**args)
@@ -285,3 +292,21 @@ class ToolManager:
             return "Error: numpy or scikit-learn not installed."
         except Exception as e:
             return f"Error in RAG search: {str(e)}"
+
+    def schedule_task(self, trigger_type, schedule_args, instruction):
+        if not self.agent: return "Agent not connected."
+        return self.agent.add_scheduled_task(trigger_type, schedule_args, instruction)
+
+    def list_tasks(self):
+        if not self.agent: return "Agent not connected."
+        jobs = self.agent.scheduler.get_jobs()
+        if not jobs: return "No active scheduled tasks."
+        
+        task_list = []
+        for job in jobs:
+            task_list.append(f"ID: {job.id} | Trigger: {job.trigger} | Instruction: {job.args[2]}")
+        return "\n".join(task_list)
+
+    def remove_task(self, task_id):
+        if not self.agent: return "Agent not connected."
+        return self.agent.remove_scheduled_task(task_id)

@@ -9,6 +9,9 @@ import sys
 from datetime import datetime
 from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, MessageHandler, filters
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
+from apscheduler.triggers.interval import IntervalTrigger
 from core.models import LLMAdapter
 from core.tools import ToolManager
 from core.server import start_web_server
@@ -25,16 +28,23 @@ class VoidClawAgent:
         self.base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         self.workspace_dir = os.path.join(self.base_dir, self.config.get('workspace_dir', 'workspace'))
         self.chats_dir = os.path.join(self.base_dir, 'common', 'chats')
+        self.tasks_path = os.path.join(self.base_dir, 'common', 'tasks.yaml')
         
         if not os.path.exists(self.chats_dir):
             os.makedirs(self.chats_dir)
         
         self.model = LLMAdapter(self.config)
         self.tools = ToolManager(self.workspace_dir)
+        self.tools.set_agent(self) # Allow tools to access agent
         
         self.system_prompt = self._load_system_prompt()
         self.history = [] 
         self.session_id = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+        # Scheduler
+        self.scheduler = AsyncIOScheduler()
+        self.scheduler.start()
+        self._load_tasks()
 
         # UI Elements (Orange Rebrand)
         self.LOGO = "𒆙"
@@ -57,6 +67,56 @@ class VoidClawAgent:
         self.history = []
         self.session_id = datetime.now().strftime("%Y%m%d_%H%M%S")
         return "Session reset. Memory cleared."
+
+    def _load_tasks(self):
+        if os.path.exists(self.tasks_path):
+            with open(self.tasks_path, 'r') as f:
+                tasks = yaml.safe_load(f) or []
+                for task in tasks:
+                    self.add_scheduled_task(task['type'], task['args'], task['instruction'], save=False)
+
+    def _save_tasks(self):
+        tasks = []
+        for job in self.scheduler.get_jobs():
+            tasks.append({
+                'type': job.args[0],
+                'args': job.args[1],
+                'instruction': job.args[2]
+            })
+        with open(self.tasks_path, 'w') as f:
+            yaml.dump(tasks, f)
+
+    def add_scheduled_task(self, trigger_type, trigger_args, instruction, save=True):
+        try:
+            if trigger_type == 'cron':
+                trigger = CronTrigger.from_crontab(trigger_args)
+            else:
+                trigger = IntervalTrigger(minutes=int(trigger_args))
+            
+            task_id = str(uuid.uuid4())[:8]
+            self.scheduler.add_job(
+                self.execute_scheduled_task,
+                trigger,
+                args=[trigger_type, trigger_args, instruction],
+                id=task_id
+            )
+            if save: self._save_tasks()
+            return f"Success: Task {task_id} scheduled ({trigger_type}: {trigger_args})"
+        except Exception as e:
+            return f"Error scheduling task: {str(e)}"
+
+    def remove_scheduled_task(self, task_id):
+        try:
+            self.scheduler.remove_job(task_id)
+            self._save_tasks()
+            return f"Success: Task {task_id} removed."
+        except:
+            return f"Error: Task {task_id} not found."
+
+    async def execute_scheduled_task(self, t_type, t_args, instruction):
+        RESET = '\033[0m'
+        print(f"\n{self.ORANGE}{self.BOLD}⏰ AUTONOMOUS TASK{RESET} {self.DIM}»{RESET} {instruction}")
+        await self.process_message(f"AUTONOMOUS SCHEDULED TASK: {instruction}", source="AUTO")
 
     def _load_system_prompt(self):
         user_md_path = os.path.join(self.base_dir, 'common', 'user.md')
@@ -90,6 +150,15 @@ Tools:
 - download_youtube: url, format_type (video/audio)
 - convert_media: input_file, output_format
 - local_rag_search: query (Semantic search across all workspace files)
+- schedule_task: trigger_type ('cron' or 'interval'), schedule_args (cron string or minutes), instruction (Goal for the agent)
+- list_tasks: (List all scheduled autonomous tasks)
+- remove_task: task_id (Cancel a task)
+
+Autonomous Operation:
+You can schedule yourself to perform tasks 24/7. 
+Example: Use 'schedule_task' with 'interval' and '60' to remind the user of something every hour.
+Example: Use 'schedule_task' with 'cron' and '0 8 * * *' to perform a daily morning briefing.
+When a scheduled task triggers, you will receive a message from 'SYSTEM' and you should execute the instruction autonomously.
 
 Respond normally for final answers.
 """

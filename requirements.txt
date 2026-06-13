@@ -12,3 +12,4 @@ beautifulsoup4
 yt-dlp
 numpy
 scikit-learn
+apscheduler
