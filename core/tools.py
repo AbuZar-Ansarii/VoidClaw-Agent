@@ -123,14 +123,26 @@ class ToolManager:
             from youtube_transcript_api import YouTubeTranscriptApi
             from urllib.parse import urlparse, parse_qs
             parsed_url = urlparse(url)
-            video_id = parse_qs(parsed_url.query).get('v')
-            if not video_id:
-                video_id = parsed_url.path.split('/')[-1]
-            else:
-                video_id = video_id[0]
             
-            transcript = YouTubeTranscriptApi.get_transcript(video_id)
-            text = " ".join([t['text'] for t in transcript])
+            video_id = None
+            if parsed_url.hostname in ['www.youtube.com', 'youtube.com']:
+                if parsed_url.path == '/watch':
+                    video_id = parse_qs(parsed_url.query).get('v')
+                    if video_id: video_id = video_id[0]
+                elif parsed_url.path.startswith(('/embed/', '/v/', '/live/')):
+                    video_id = parsed_url.path.split('/')[2]
+            elif parsed_url.hostname == 'youtu.be':
+                video_id = parsed_url.path.split('/')[1]
+                
+            if not video_id:
+                # Fallback to simple split if hostname doesn't match expected patterns
+                video_id = parsed_url.path.split('/')[-1]
+
+            api = YouTubeTranscriptApi()
+            transcript_obj = api.fetch(video_id)
+            transcript_data = transcript_obj.to_raw_data()
+            
+            text = " ".join([t['text'] for t in transcript_data])
             return text[:4000] # Limit size to prevent token explosion
         except Exception as e:
             return f"Error fetching transcript: {str(e)}"
