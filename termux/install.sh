@@ -19,17 +19,20 @@ echo -e "${CYAN}================================================================
 # 1. System Update & Dependencies
 echo -e "${BLUE}[*] Updating system packages...${NC}"
 pkg update -y && pkg upgrade -y
+pkg install -y x11-repo tur-repo
 
 echo -e "${BLUE}[*] Installing dependencies (Python, Git, Build Tools, Math Libs)...${NC}"
-pkg install -y python git clang libyaml make cmake openblas openblas-dev mathjax
-# Optional but recommended for faster numpy installs on termux:
-MATHLIB=openblas pkg install -y python-numpy
+pkg install -y python git clang libyaml make cmake openblas
+# Optional but recommended for faster numpy/scikit-learn installs on termux:
+pkg install -y python-numpy python-scikit-learn
 
 # 2. Virtual Environment
 echo -e "${BLUE}[*] Setting up Python virtual environment...${NC}"
-cd ..
+PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$PROJECT_DIR"
+
 if [ ! -d ".venv" ]; then
-    python -m venv .venv
+    python -m venv --system-site-packages .venv
 fi
 source .venv/bin/activate
 
