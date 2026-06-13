@@ -22,9 +22,9 @@ pkg update -y && pkg upgrade -y
 pkg install -y x11-repo tur-repo
 
 echo -e "${BLUE}[*] Installing dependencies (Python, Git, Build Tools, Math Libs)...${NC}"
-pkg install -y python git clang libyaml make cmake openblas
+pkg install -y python git clang libyaml make cmake openblas ninja
 # Optional but recommended for faster numpy/scikit-learn installs on termux:
-pkg install -y python-numpy python-scikit-learn
+pkg install -y python-numpy python-scikit-learn python-yaml
 
 # 2. Virtual Environment
 echo -e "${BLUE}[*] Setting up Python virtual environment...${NC}"
@@ -42,7 +42,10 @@ pip install --upgrade pip
 echo -e "${BLUE}[*] Installing project requirements...${NC}"
 # Termux sometimes needs help with certain packages
 pip install wheel
-pip install -r requirements.txt
+# Filter requirements.txt to skip pre-installed system packages on Termux
+grep -vE "numpy|scikit-learn|pyyaml|yaml" requirements.txt > termux_reqs.txt
+pip install -r termux_reqs.txt
+rm termux_reqs.txt
 
 # 3. Configuration Wizard
 echo -e "\n${GREEN}[+] Installation complete!${NC}"
