@@ -23,9 +23,11 @@ pkg install -y x11-repo tur-repo
 pkg update -y
 
 echo -e "${BLUE}[*] Installing dependencies (Python, Git, Build Tools, Math Libs)...${NC}"
-pkg install -y python git clang libyaml make cmake openblas ninja rust ffmpeg
-# Optional but recommended for faster numpy/scikit-learn installs on termux:
-pkg install -y python-numpy python-scikit-learn python-pyyaml
+pkg install -y python git clang libyaml make cmake openblas ninja rust ffmpeg libxml2 libxslt libjpeg-turbo libpng
+# Optional but recommended for faster installs on termux:
+pkg install -y python-numpy python-lxml || echo "python-lxml not found, will compile via pip"
+pkg install -y python-scikit-learn || echo "python-scikit-learn not found, will compile via pip"
+pkg install -y python-pyyaml || pkg install -y python-yaml || echo "python-yaml not found, will compile via pip"
 
 # 2. Virtual Environment
 echo -e "${BLUE}[*] Setting up Python virtual environment...${NC}"
@@ -44,7 +46,7 @@ echo -e "${BLUE}[*] Installing project requirements...${NC}"
 # Termux sometimes needs help with certain packages
 pip install wheel
 # Filter requirements.txt to skip pre-installed system packages on Termux
-grep -vE "numpy|scikit-learn|pyyaml|yaml" requirements.txt > termux_reqs.txt
+grep -vE "numpy|scikit-learn|pyyaml|yaml|lxml" requirements.txt > termux_reqs.txt
 pip install -r termux_reqs.txt
 rm termux_reqs.txt
 
