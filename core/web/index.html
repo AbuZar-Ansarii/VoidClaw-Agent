@@ -14,17 +14,18 @@
             --bg-app: #0a0a0a;
             --bg-sidebar: #121212;
             --bg-card: #181818;
-            --border-main: rgba(255, 255, 255, 0.05);
+            --border-main: rgba(255, 255, 255, 0.08);
             --text-primary: #ffffff;
             --text-secondary: #a1a1aa;
             --text-muted: #52525b;
             --msg-agent: #1e1e1e;
             --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             --sidebar-width: 300px;
+            --glass: rgba(24, 24, 24, 0.7);
         }
 
         [data-theme="light"] {
-            --bg-app: #fafafa;
+            --bg-app: #f4f4f5;
             --bg-sidebar: #ffffff;
             --bg-card: #ffffff;
             --border-main: #e5e5e7;
@@ -32,8 +33,9 @@
             --text-secondary: #52525b;
             --text-muted: #a1a1aa;
             --msg-user: #f97316;
-            --msg-agent: #f4f4f5;
+            --msg-agent: #ffffff;
             --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --glass: rgba(255, 255, 255, 0.8);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -54,32 +56,42 @@
             border-right: 1px solid var(--border-main);
             display: flex;
             flex-direction: column;
-            padding: 24px;
+            padding: 24px 16px;
             flex-shrink: 0;
             z-index: 20;
             transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .sidebar.collapsed { margin-left: calc(var(--sidebar-width) * -1); }
 
-        .brand-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; }
+        .brand-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; padding: 0 8px; }
         .brand-logo-area { display: flex; align-items: center; gap: 12px; }
         .brand-logo { font-size: 26px; color: var(--accent); text-shadow: 0 0 15px rgba(249, 115, 22, 0.3); }
         .brand-name { font-weight: 600; font-size: 19px; letter-spacing: -0.01em; }
 
-        .sidebar-section { flex: 1; overflow-y: auto; margin-bottom: 20px; }
-        .section-label { font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px; letter-spacing: 0.05em; display: block; }
+        .sidebar-section { flex: 1; overflow-y: auto; margin-bottom: 20px; padding-right: 4px; }
+        .sidebar-section::-webkit-scrollbar { width: 4px; }
+        .sidebar-section::-webkit-scrollbar-thumb { background: var(--border-main); border-radius: 10px; }
+
+        .section-label { font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px; margin-top: 32px; letter-spacing: 0.05em; display: block; padding: 0 8px; }
 
         .nav-item {
             padding: 12px 14px;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 14px;
             color: var(--text-secondary);
             cursor: pointer;
             display: flex;
-            align-items: center; gap: 12px; margin-bottom: 6px; transition: 0.2s ease;
+            align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 6px; transition: 0.2s ease;
+            position: relative;
+            overflow: hidden;
         }
         .nav-item:hover { background: rgba(249, 115, 22, 0.08); color: var(--accent); }
         .nav-item.active { background: rgba(249, 115, 22, 0.12); color: var(--accent); font-weight: 500; }
+        
+        .history-item-content { display: flex; align-items: center; gap: 12px; flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+        .delete-chat { opacity: 0; color: var(--text-muted); transition: 0.2s; padding: 4px; }
+        .nav-item:hover .delete-chat { opacity: 1; }
+        .delete-chat:hover { color: #ef4444 !important; }
 
         /* Workspace */
         .workspace { flex: 1; display: flex; flex-direction: column; position: relative; width: 100%; transition: width 0.3s ease; }
@@ -88,8 +100,9 @@
             padding: 16px 32px;
             border-bottom: 1px solid var(--border-main);
             display: flex; justify-content: space-between; align-items: center;
-            background: var(--bg-sidebar);
-            backdrop-filter: blur(10px);
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            z-index: 10;
         }
 
         .toggle-sidebar-btn {
@@ -106,84 +119,101 @@
             flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;
             padding: 40px; text-align: center; width: 100%; max-width: 950px; margin: 0 auto;
         }
-        .greeting { font-size: 32px; font-weight: 600; margin-bottom: 16px; background: linear-gradient(to right, var(--accent), #fbbf24); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .sub-greeting { color: var(--text-secondary); margin-bottom: 48px; font-size: 18px; }
-        .suggestions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; width: 100%; }
-        .suggestion-card { background: var(--bg-card); border: 1px solid var(--border-main); padding: 20px; border-radius: 16px; cursor: pointer; transition: 0.3s; text-align: left; display: flex; flex-direction: column; gap: 10px; }
-        .suggestion-card:hover { border-color: var(--accent); background: rgba(249, 115, 22, 0.05); transform: translateY(-4px); }
-        .suggestion-card i { color: var(--accent); font-size: 18px; }
+        .greeting { font-size: 36px; font-weight: 700; margin-bottom: 16px; background: linear-gradient(135deg, var(--accent), #fbbf24); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .sub-greeting { color: var(--text-secondary); margin-bottom: 48px; font-size: 18px; max-width: 500px; }
+        .suggestions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; width: 100%; }
+        .suggestion-card { background: var(--bg-card); border: 1px solid var(--border-main); padding: 24px; border-radius: 18px; cursor: pointer; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); text-align: left; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .suggestion-card:hover { border-color: var(--accent); background: rgba(249, 115, 22, 0.05); transform: translateY(-6px); box-shadow: 0 12px 24px rgba(0,0,0,0.2); }
+        .suggestion-card i { color: var(--accent); font-size: 20px; }
+        .suggestion-card span { font-size: 14px; font-weight: 500; color: var(--text-primary); }
 
         /* Chat View */
         .chat-view {
             flex: 1; padding: 40px 20px; overflow-y: auto; overflow-x: hidden;
-            display: none; flex-direction: column; gap: 28px;
+            display: none; flex-direction: column; gap: 32px;
             width: 100%; align-items: center;
         }
+        .chat-view::-webkit-scrollbar { width: 6px; }
+        .chat-view::-webkit-scrollbar-thumb { background: var(--border-main); border-radius: 10px; }
 
-        .msg-row { display: flex; flex-direction: column; width: 100%; max-width: 950px; animation: fadeIn 0.4s ease; }
+        .msg-row { display: flex; flex-direction: column; width: 100%; max-width: 850px; animation: slideIn 0.4s cubic-bezier(0, 0, 0.2, 1); }
+        @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
         .msg-user { align-items: flex-end; }
         .msg-agent { align-items: flex-start; }
-        .bubble { max-width: 82%; padding: 18px 22px; border-radius: 18px; font-size: 15px; line-height: 1.6; box-shadow: var(--shadow); word-wrap: break-word; white-space: pre-wrap; }
+        .bubble { max-width: 85%; padding: 18px 24px; border-radius: 20px; font-size: 15.5px; line-height: 1.6; box-shadow: var(--shadow); word-wrap: break-word; white-space: pre-wrap; }
         .msg-user .bubble { background: var(--accent); color: white; border-bottom-right-radius: 4px; }
         .msg-agent .bubble { background: var(--msg-agent); border: 1px solid var(--border-main); color: var(--text-primary); border-bottom-left-radius: 4px; }
 
-        .thought-trace {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-bottom: 10px;
-            padding-left: 4px;
-            opacity: 0.8;
-        }
-
-        /* Spinning Logo Indicator */
-        .spinner-container {
-            display: none;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 10px;
-            padding: 10px 15px;
-            background: var(--bg-card);
-            border-radius: 12px;
-            border: 1px solid var(--border-main);
-            width: fit-content;
-            align-self: flex-start;
-        }
-        .spin-logo { font-size: 20px; color: var(--accent); animation: spin 2s linear infinite; }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
         /* Modal Settings */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(8px); }
-        .modal-content { background: var(--bg-card); width: 95%; max-width: 550px; padding: 40px; border-radius: 20px; border: 1px solid var(--border-main); }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(12px); animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal-content { background: var(--bg-card); width: 95%; max-width: 550px; padding: 40px; border-radius: 24px; border: 1px solid var(--border-main); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
 
         /* Input Bar */
-        .input-bar { padding: 32px; max-width: 950px; margin: 0 auto; width: 100%; }
-        .input-box { background: var(--bg-sidebar); border: 1px solid var(--border-main); border-radius: 16px; padding: 10px 20px; display: flex; align-items: center; gap: 16px; box-shadow: var(--shadow); }
-        .input-box input { flex: 1; background: transparent; border: none; padding: 14px 0; color: var(--text-primary); outline: none; font-size: 16px; }
-        .btn-primary { background: var(--accent); color: white; border: none; padding: 12px 24px; border-radius: 10px; font-weight: 600; cursor: pointer; }
-        #fileInput { display: none; }
+        .input-bar { padding: 32px; max-width: 900px; margin: 0 auto; width: 100%; }
+        .input-box { 
+            background: var(--bg-sidebar); border: 1px solid var(--border-main); border-radius: 20px; padding: 8px 16px; 
+            display: flex; align-items: flex-end; gap: 12px; box-shadow: var(--shadow); transition: 0.3s;
+            max-height: 200px;
+        }
+        .input-box:focus-within { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1); }
+        
+        .input-box textarea { 
+            flex: 1; background: transparent; border: none; padding: 12px 0; color: var(--text-primary); 
+            outline: none; font-size: 16px; font-family: inherit; resize: none; max-height: 180px; line-height: 1.5;
+        }
+        .input-box textarea::-webkit-scrollbar { width: 4px; }
+        .input-box textarea::-webkit-scrollbar-thumb { background: var(--border-main); border-radius: 10px; }
+
+        .input-actions { display: flex; align-items: center; gap: 8px; padding-bottom: 8px; }
+        .icon-btn { color: var(--text-muted); cursor: pointer; padding: 10px; border-radius: 12px; transition: 0.2s; font-size: 18px; }
+        .icon-btn:hover { color: var(--accent); background: rgba(249, 115, 22, 0.08); }
+
+        .btn-send { background: var(--accent); color: white; border: none; width: 42px; height: 42px; border-radius: 14px; font-size: 16px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; margin-bottom: 4px; }
+        .btn-send:hover { background: var(--accent-hover); transform: scale(1.05); }
+        .btn-send:active { transform: scale(0.95); }
+
+        /* Spinner */
+        .spinner-container {
+            display: none; align-items: center; gap: 12px; margin-bottom: 10px; padding: 12px 20px;
+            background: var(--bg-card); border-radius: 16px; border: 1px solid var(--border-main); width: fit-content; align-self: flex-start;
+        }
+        .spin-logo { font-size: 22px; color: var(--accent); animation: spin 2s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* Toast */
+        #toast {
+            position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: #10b981; color: white; padding: 12px 24px; border-radius: 12px;
+            font-weight: 600; font-size: 14px; z-index: 1000; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+        }
+        #toast.show { transform: translateX(-50%) translateY(0); }
     </style>
 </head>
 <body>
+    <div id="toast"><i class="fas fa-check-circle"></i> Changes applied successfully</div>
+
     <!-- Modal -->
     <div class="modal-overlay" id="settingsModal">
         <div class="modal-content">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 30px; align-items: center;">
                 <h3 style="font-size: 20px; font-weight: 600;">System Configuration</h3>
-                <i class="fas fa-times icon-btn" onclick="closeSettings()" style="cursor:pointer; color: var(--text-muted);"></i>
+                <i class="fas fa-times" onclick="closeSettings()" style="cursor:pointer; color: var(--text-muted); padding: 8px;"></i>
             </div>
             <div style="margin-bottom: 24px;">
-                <label style="font-size: 13px; color: var(--text-secondary); display: block; margin-bottom: 12px;">System Prompt</label>
-                <textarea id="systemPrompt" rows="8" style="width: 100%; background: var(--bg-app); border: 1px solid var(--border-main); color: white; padding: 16px; border-radius: 10px; resize: none;"></textarea>
+                <label style="font-size: 13px; color: var(--text-secondary); display: block; margin-bottom: 12px; font-weight: 500;">Core Directives (System Prompt)</label>
+                <textarea id="systemPrompt" rows="8" style="width: 100%; background: var(--bg-app); border: 1px solid var(--border-main); color: var(--text-primary); padding: 16px; border-radius: 14px; resize: none; font-size: 14px; line-height: 1.5; outline: none; transition: 0.2s;"></textarea>
             </div>
-            <div style="margin-bottom: 24px;">
+            <div style="margin-bottom: 32px;">
                 <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                    <label style="font-size: 13px; color: var(--text-secondary);">Temperature</label>
-                    <span style="color: var(--accent);" id="tempVal">0.7</span>
+                    <label style="font-size: 13px; color: var(--text-secondary); font-weight: 500;">Creativity Coefficient (Temperature)</label>
+                    <span style="color: var(--accent); font-weight: 600;" id="tempVal">0.7</span>
                 </div>
-                <input type="range" id="temperature" min="0" max="1" step="0.1" value="0.7" oninput="updateTempLabel(this.value)" style="width: 100%; accent-color: var(--accent);">
+                <input type="range" id="temperature" min="0" max="1" step="0.1" value="0.7" oninput="updateTempLabel(this.value)" style="width: 100%; accent-color: var(--accent); cursor: pointer;">
             </div>
-            <button class="btn-primary" style="width: 100%;" onclick="saveSettings()">Apply Changes</button>
+            <button class="btn-primary" style="width: 100%; background: var(--accent); color: white; border: none; padding: 14px; border-radius: 14px; font-weight: 600; cursor: pointer; transition: 0.2s;" onclick="saveSettings()">Save Configuration</button>
         </div>
     </div>
 
@@ -192,12 +222,11 @@
         <div class="brand-header">
             <div class="brand-logo-area"><div class="brand-logo">𒆙</div><div class="brand-name">VoidClaw</div></div>
         </div>
-        <div class="nav-item active" onclick="initNewSession()"><i class="fas fa-plus"></i> New Session</div>
-        <div class="nav-item" onclick="openSettings()"><i class="fas fa-sliders-h"></i> Settings</div>
-        <div class="sidebar-section">
-            <span class="section-label" style="margin-top: 32px;">Memory Vault</span>
-            <div id="historyList"></div>
-        </div>
+        <div class="nav-item active" onclick="initNewSession()"><div class="history-item-content"><i class="fas fa-plus"></i> New Session</div></div>
+        <div class="nav-item" onclick="openSettings()"><div class="history-item-content"><i class="fas fa-sliders-h"></i> Settings</div></div>
+        
+        <span class="section-label">Archive Retrieval</span>
+        <div class="sidebar-section" id="historyList"></div>
     </div>
 
     <!-- Workspace -->
@@ -205,25 +234,25 @@
         <header class="top-nav">
             <div style="display: flex; align-items: center; gap: 24px;">
                 <button class="toggle-sidebar-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
-                <div id="modelStatus" style="font-size: 13px; font-weight: 500; color: var(--text-secondary);">Neural Engine: <span style="color: var(--accent);">---</span></div>
+                <div id="modelStatus" style="font-size: 13px; font-weight: 500; color: var(--text-secondary);">Core Engine: <span style="color: var(--accent);">---</span></div>
             </div>
             <div class="actions">
                 <div class="theme-btn" onclick="toggleTheme()"><i id="themeIcon" class="fas fa-moon"></i></div>
-                <div style="display: flex; align-items: center; gap: 10px; background: rgba(16, 185, 129, 0.1); padding: 6px 14px; border-radius: 20px;">
-                    <div style="width: 7px; height: 7px; background: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981;"></div>
-                    <span style="font-size: 11px; font-weight: 700; color: #10b981;">ONLINE</span>
+                <div style="display: flex; align-items: center; gap: 10px; background: rgba(16, 185, 129, 0.1); padding: 8px 16px; border-radius: 20px;">
+                    <div style="width: 8px; height: 8px; background: #10b981; border-radius: 50%; box-shadow: 0 0 10px #10b981;"></div>
+                    <span style="font-size: 11px; font-weight: 700; color: #10b981; letter-spacing: 0.05em;">READY</span>
                 </div>
             </div>
         </header>
 
         <main class="welcome-view" id="welcomeView">
             <div class="greeting" id="greetingText">Good morning, Commander</div>
-            <div class="sub-greeting">How can VoidClaw assist your operations today?</div>
+            <div class="sub-greeting">Initiate a transmission or select an archived session to begin neural linkage.</div>
             <div class="suggestions-grid">
-                <div class="suggestion-card" onclick="useSuggestion('Plan a 10-day trip to Japan with a focus on tech and tradition.')"><i class="fas fa-plane"></i><span>Plan a trip to Japan</span></div>
+                <div class="suggestion-card" onclick="useSuggestion('Plan a 10-day trip to Japan with a focus on tech and tradition.')"><i class="fas fa-plane"></i><span>Plan a Trip</span></div>
                 <div class="suggestion-card" onclick="useSuggestion('Search for the latest breakthroughs in autonomous AI agents from this week.')"><i class="fas fa-search"></i><span>Latest AI News</span></div>
                 <div class="suggestion-card" onclick="useSuggestion('Create a project structure for a Python-based automation tool.')"><i class="fas fa-code"></i><span>Code Architecture</span></div>
-                <div class="suggestion-card" onclick="useSuggestion('List all files in my workspace and summarize their contents.')"><i class="fas fa-folder-open"></i><span>Analyze Workspace</span></div>
+                <div class="suggestion-card" onclick="useSuggestion('List all files in my workspace and summarize their contents.')"><i class="fas fa-folder-open"></i><span>Workspace Insight</span></div>
             </div>
         </main>
 
@@ -231,15 +260,17 @@
 
         <div class="spinner-container" id="loadingIndicator">
             <div class="spin-logo">𒆙</div>
-            <span style="font-size: 13px; color: var(--text-secondary);">Analyzing...</span>
+            <span style="font-size: 13px; color: var(--text-secondary); font-weight: 500;">Processing...</span>
         </div>
 
         <footer class="input-bar">
             <div class="input-box">
-                <label for="fileInput" class="icon-btn" style="cursor:pointer; color: var(--text-muted);"><i class="fas fa-plus-circle"></i></label>
-                <input type="file" id="fileInput" onchange="handleFileUpload(this)">
-                <input type="text" id="userInput" placeholder="Enter transmission..." onkeypress="handleKey(event)">
-                <button class="btn-primary" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+                <div class="input-actions">
+                    <label for="fileInput" class="icon-btn"><i class="fas fa-paperclip"></i></label>
+                    <input type="file" id="fileInput" onchange="handleFileUpload(this)" style="display:none">
+                </div>
+                <textarea id="userInput" placeholder="Type a message (Shift + Enter for new line)..." rows="1" oninput="autoGrow(this)" onkeydown="handleKey(event)"></textarea>
+                <button class="btn-send" onclick="sendMessage()"><i class="fas fa-arrow-up"></i></button>
             </div>
         </footer>
     </div>
@@ -259,20 +290,58 @@
         function closeSettings() { document.getElementById('settingsModal').style.display = 'none'; }
         function updateTempLabel(val) { document.getElementById('tempVal').innerText = val; }
 
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        async function saveSettings() {
+            try {
+                const res = await fetch('/settings', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ system_prompt: systemPrompt.value })
+                });
+                if (res.ok) {
+                    showToast();
+                    closeSettings();
+                }
+            } catch (e) {}
+        }
+
+        function autoGrow(element) {
+            element.style.height = "auto";
+            element.style.height = (element.scrollHeight) + "px";
+        }
+
         function toggleTheme() {
             const body = document.body;
-            if (body.getAttribute('data-theme') === 'dark') {
-                body.setAttribute('data-theme', 'light');
-                themeIcon.className = 'fas fa-sun';
-            } else {
+            if (body.getAttribute('data-theme') === 'light') {
                 body.setAttribute('data-theme', 'dark');
                 themeIcon.className = 'fas fa-moon';
+            } else {
+                body.setAttribute('data-theme', 'light');
+                themeIcon.className = 'fas fa-sun';
             }
         }
 
         async function initNewSession() {
             await fetch('/new-session', { method: 'POST' });
             window.location.reload();
+        }
+
+        async function deleteSession(e, filename) {
+            e.stopPropagation();
+            if (!confirm("Confirm permanent deletion of this archive?")) return;
+            try {
+                const res = await fetch(`/delete-session/${filename}`, { method: 'DELETE' });
+                if (res.ok) {
+                    init(); // Refresh history list
+                }
+            } catch (e) {
+                alert("Failed to delete session.");
+            }
         }
 
         async function loadChatDetail(filename) {
@@ -285,15 +354,16 @@
                 const data = await res.json();
                 chatView.innerHTML = '';
                 
-                // Robust parsing of markdown logs
                 const blocks = data.content.split('### [');
                 blocks.forEach(block => {
                     if (!block.trim()) return;
                     const lines = block.split('\n');
-                    const headerLine = lines[0]; // e.g. 20:30:15] USER (TERM)
+                    const headerLine = lines[0];
                     const role = headerLine.includes('USER') ? 'user' : 'agent';
                     const messageContent = lines.slice(1).join('\n').trim();
-                    if (messageContent) addMessage(messageContent, role);
+                    if (messageContent && !headerLine.includes('THOUGHT') && !headerLine.includes('ACTION') && !headerLine.includes('OBSERVATION')) {
+                        addMessage(messageContent, role);
+                    }
                 });
             } catch (e) { addMessage('Failed to load archive.', 'agent'); }
         }
@@ -306,24 +376,14 @@
             chatView.style.display = 'flex';
             addMessage(text, 'user');
             userInput.value = '';
+            userInput.style.height = "auto";
 
-            const loadingMessages = [
-                "Synchronizing neural pathways...",
-                "Querying the void...",
-                "Processing transmission...",
-                "Synthesizing response...",
-                "Calculating variables...",
-                "Accessing data streams...",
-                "Aligning logic matrices...",
-                "Working...",
-                "Thinking..."
-            ];
+            const loadingMessages = ["Processing transmission...", "Synthesizing response...", "Aligning logic matrices...", "Thinking..."];
             loadingIndicator.querySelector('span').innerText = loadingMessages[Math.floor(Math.random() * loadingMessages.length)];
             loadingIndicator.style.display = 'flex';
             chatView.appendChild(loadingIndicator);
             chatView.scrollTop = chatView.scrollHeight;
 
-            // Create a row for the response
             const responseRow = document.createElement('div');
             responseRow.className = 'msg-row msg-agent';
             const bubble = document.createElement('div');
@@ -336,7 +396,7 @@
                 const response = await fetch('/chat', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ message: text, temperature: parseFloat(temperature.value) })
+                    body: JSON.stringify({ message: text })
                 });
 
                 const reader = response.body.getReader();
@@ -356,8 +416,7 @@
                             if (data.startsWith('CHUNK:')) {
                                 loadingIndicator.style.display = 'none';
                                 bubble.style.display = 'block';
-                                const text = data.slice(6);
-                                fullResponse += text;
+                                fullResponse += data.slice(6);
                                 bubble.innerText = fullResponse;
                                 chatView.scrollTop = chatView.scrollHeight;
                             } else if (data.startsWith('THOUGHT:')) {
@@ -381,7 +440,7 @@
             chatView.scrollTop = chatView.scrollHeight;
         }
 
-        function useSuggestion(text) { userInput.value = text; sendMessage(); }
+        function useSuggestion(text) { userInput.value = text; autoGrow(userInput); sendMessage(); }
 
         async function init() {
             const hour = new Date().getHours();
@@ -394,13 +453,46 @@
                 
                 const hRes = await fetch('/history');
                 const hData = await hRes.json();
-                historyList.innerHTML = hData.map(f => `
-                    <div class="nav-item" onclick="loadChatDetail('${f}')"><i class="far fa-file-alt"></i> ${f.replace('.md', '').replace('chat_', '')}</div>
-                `).join('');
+                
+                historyList.innerHTML = '';
+                for(const file of hData) {
+                    const detailRes = await fetch(`/chat-detail/${file}`);
+                    const detailData = await detailRes.json();
+                    
+                    // Extract first user message for snippet
+                    let snippet = file.replace('.md', '').replace('session_', '');
+                    const match = detailData.content.match(/### \[.*?\] USER.*?\n(.*?)\n/);
+                    if (match && match[1]) snippet = match[1].substring(0, 30) + (match[1].length > 30 ? '...' : '');
+
+                    const item = document.createElement('div');
+                    item.className = 'nav-item';
+                    item.onclick = () => loadChatDetail(file);
+                    item.innerHTML = `
+                        <div class="history-item-content"><i class="far fa-message"></i> <span>${snippet}</span></div>
+                        <i class="fas fa-trash-alt delete-chat" onclick="deleteSession(event, '${file}')"></i>
+                    `;
+                    historyList.appendChild(item);
+                }
             } catch (e) {}
         }
 
-        function handleKey(e) { if (e.key === 'Enter') sendMessage(); }
+        function handleKey(e) { 
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage(); 
+            }
+        }
+
+        // Notification Listener
+        const eventSource = new EventSource('/notifications');
+        eventSource.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            if (data.content) {
+                addMessage(data.content, 'agent');
+                // Play notification sound if needed
+            }
+        };
+
         init();
     </script>
 </body>

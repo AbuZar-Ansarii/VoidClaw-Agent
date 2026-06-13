@@ -12,8 +12,9 @@ from waitress import serve
 app = Flask(__name__, static_folder='web')
 CORS(app)
 
-# Global agent instance
+# Global agent instance and notification queue
 agent = None
+notification_queue = asyncio.Queue()
 
 # Configure upload folder
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'workspace')
@@ -99,6 +100,35 @@ def status():
 def new_session():
     msg = agent.clear_session()
     return jsonify({'message': msg})
+
+@app.route('/notifications')
+def notifications():
+    def stream():
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        while True:
+            try:
+                # We use a small timeout to allow checking for disconnects
+                msg = loop.run_until_complete(notification_queue.get())
+                yield f"data: {json.dumps(msg)}\n\n"
+            except:
+                break
+    return Response(stream(), mimetype='text/event-stream')
+
+def push_notification(content):
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(notification_queue.put({'content': content}))
+    loop.close()
+
+@app.route('/delete-session/<filename>', methods=['DELETE'])
+def delete_session(filename):
+    chats_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'common', 'chats')
+    file_path = os.path.join(chats_dir, filename)
+    if os.path.exists(file_path):
+        os.remove(file_path)
+        return jsonify({'message': f'Session {filename} deleted.'})
+    return jsonify({'error': 'File not found'}), 404
 
 def start_web_server(agent_instance, port=5000):
     global agent

@@ -14,7 +14,7 @@ from apscheduler.triggers.cron import CronTrigger
 from apscheduler.triggers.interval import IntervalTrigger
 from core.models import LLMAdapter
 from core.tools import ToolManager
-from core.server import start_web_server
+from core.server import start_web_server, push_notification
 
 # Disable noisy logs
 logging.basicConfig(level=logging.ERROR)
@@ -45,6 +45,9 @@ class VoidClawAgent:
         self.scheduler = AsyncIOScheduler()
         self.scheduler.start()
         self._load_tasks()
+
+        self.tg_app = None
+        self.last_tg_chat_id = None
 
         # UI Elements (Orange Rebrand)
         self.LOGO = "𒆙"
@@ -116,12 +119,24 @@ class VoidClawAgent:
     async def execute_scheduled_task(self, t_type, t_args, instruction):
         RESET = '\033[0m'
         print(f"\n{self.ORANGE}{self.BOLD}⏰ AUTONOMOUS TASK{RESET} {self.DIM}»{RESET} {instruction}")
-        await self.process_message(f"AUTONOMOUS SCHEDULED TASK: {instruction}", source="AUTO")
+        reply = await self.process_message(f"AUTONOMOUS SCHEDULED TASK: {instruction}", source="AUTO")
+        
+        # Broadcast to Web UI
+        push_notification(reply)
+
+        # If running in Telegram, push the notification
+        if self.tg_app and self.last_tg_chat_id:
+            try:
+                await self.tg_app.bot.send_message(chat_id=self.last_tg_chat_id, text=f"🔔 {reply}")
+            except Exception as e:
+                print(f"Failed to push TG notification: {e}")
 
     def _load_system_prompt(self):
         user_md_path = os.path.join(self.base_dir, 'common', 'user.md')
         with open(user_md_path, 'r', encoding='utf-8') as f:
             user_content = f.read()
+        
+        current_time = datetime.now().strftime("%A, %B %d, %Y, %H:%M:%S")
         
         return f"""
 {user_content}
@@ -130,6 +145,8 @@ You are VoidClaw, an evolutionary autonomous agent.
 You were conceptualized and built by Mohd Abuzar. When asked about your creator, state this proudly and professionally.
 IMPORTANT: You operate in distinct conversation threads. 
 Your primary directive is to GROW AND ADAPT to the user over time, similar to advanced AI constructs like Hermes.
+
+System Time: {current_time}
 
 Each thread is isolated, but you have long-term knowledge from the "User Profile" section above.
 Whenever you deduce new information about the user's workflow, expertise level, personality, or preferences, you MUST autonomously use the 'update_user_profile' tool to record it.
@@ -159,6 +176,10 @@ You can schedule yourself to perform tasks 24/7.
 Example: Use 'schedule_task' with 'interval' and '60' to remind the user of something every hour.
 Example: Use 'schedule_task' with 'cron' and '0 8 * * *' to perform a daily morning briefing.
 When a scheduled task triggers, you will receive a message from 'SYSTEM' and you should execute the instruction autonomously.
+
+To remove a task (like a reminder):
+1. First use 'list_tasks' to find the task_id matching the instruction (e.g., "water reminder").
+2. Then use 'remove_task' with that specific task_id.
 
 Respond normally for final answers.
 """
@@ -301,8 +322,11 @@ async def main():
     token = config.get('telegram_token')
     if token and token != "YOUR_TELEGRAM_BOT_TOKEN":
         application = ApplicationBuilder().token(token).build()
+        agent.tg_app = application # Store app for proactive messages
+        
         async def handle_tg(update: Update, context: ContextTypes.DEFAULT_TYPE):
             if not update.message or not update.message.text: return
+            agent.last_tg_chat_id = update.effective_chat.id # Store last chat ID
             print(f"\n\033[38;5;214m[TELEGRAM]\033[0m Incoming transmission from {update.effective_user.first_name}...")
             reply = await agent.process_message(update.message.text, source="TG")
             await update.message.reply_text(reply)
