@@ -2,6 +2,7 @@ import os
 import requests
 import json
 import ollama
+import asyncio
 
 class LLMAdapter:
     def __init__(self, config):
@@ -9,11 +10,20 @@ class LLMAdapter:
         self.provider = config.get('default_provider', 'ollama')
 
     async def generate_response(self, prompt, system_prompt=""):
-        # Legacy non-streaming call
+        # Run synchronous generate methods in a thread to avoid blocking the event loop
         if self.provider == 'ollama':
-            return self._ollama_generate(prompt, system_prompt)
-        # ... other providers ...
-        return await self._openai_generate(prompt, system_prompt)
+            return await asyncio.to_thread(self._ollama_generate, prompt, system_prompt)
+        elif self.provider == 'openai':
+            return await asyncio.to_thread(self._openai_generate, prompt, system_prompt)
+        elif self.provider == 'gemini':
+            return await asyncio.to_thread(self._gemini_generate, prompt, system_prompt)
+        elif self.provider == 'anthropic':
+            return await asyncio.to_thread(self._anthropic_generate, prompt, system_prompt)
+        elif self.provider == 'openrouter':
+            return await asyncio.to_thread(self._openrouter_generate, prompt, system_prompt)
+        elif self.provider == 'nvidia':
+            return await asyncio.to_thread(self._nvidia_generate, prompt, system_prompt)
+        return "Error: Unknown Provider"
 
     async def generate_stream(self, prompt, system_prompt=""):
         if self.provider == 'ollama':

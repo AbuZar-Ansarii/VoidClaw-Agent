@@ -13,3 +13,4 @@ yt-dlp
 numpy
 scikit-learn
 apscheduler
+psutil

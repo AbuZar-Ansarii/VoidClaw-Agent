@@ -76,10 +76,42 @@ class VoidClawAgent:
         return "Session reset. Memory cleared."
 
     def get_dashboard_stats(self):
-        # ... (existing code)
+        uptime = str(datetime.now() - self.start_time).split('.')[0]
+        jobs = self.scheduler.get_jobs()
+        active_tasks = [{"id": j.id, "trigger": str(j.trigger), "instruction": j.args[2]} for j in jobs]
+        
+        # Calculate weekly activity
+        activity_data = [0] * 7
+        try:
+            for f in os.listdir(self.chats_dir):
+                if f.endswith('.md'):
+                    stats = os.stat(os.path.join(self.chats_dir, f))
+                    day_idx = datetime.fromtimestamp(stats.st_mtime).weekday()
+                    activity_data[day_idx] += 1
+        except: pass
+
+        # System & Workspace
+        cpu_usage = psutil.cpu_percent()
+        ram_usage = psutil.virtual_memory().percent
+        ws_files = 0
+        ws_size = 0
+        try:
+            for root, _, files in os.walk(self.workspace_dir):
+                ws_files += len(files)
+                ws_size += sum(os.path.getsize(os.path.join(root, name)) for name in files)
+        except: pass
+
         return {
             "uptime": uptime,
-            # ...
+            "total_tokens": self.total_tokens,
+            "active_tasks": active_tasks,
+            "activity": activity_data,
+            "tool_usage": self.tool_usage,
+            "system": {"cpu": cpu_usage, "ram": ram_usage},
+            "workspace": {"files": ws_files, "size": round(ws_size / (1024 * 1024), 2)},
+            "provider": self.config['default_provider'],
+            "model": self.config[self.config['default_provider']]['model'],
+            "channels": ["Terminal", "Web UI"] + (["Telegram"] if self.tg_app else [])
         }
 
     def get_settings(self):

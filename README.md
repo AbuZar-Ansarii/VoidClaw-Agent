@@ -85,16 +85,18 @@ Turn your Android phone into an autonomous AI Command Center!
 3. Follow the Configuration Wizard.
 4. Double-click `windows\run.bat` to launch the agent.
 
-### 🍎 macOS & 🐧 Linux Setup
-```bash
-git clone https://github.com/AbuZar-Ansarii/VoidClaw-Agent.git
-cd VoidClaw-Agent
-chmod +x linux/install.sh linux/run.sh
-./linux/install.sh
+### 🍎 macOS Setup (Silicon & Intel)
+1. Clone the repository or copy to USB.
+2. Open the `mac` folder.
+3. Right-click `install_mac.command` and select **Open** (grant permission if asked).
+4. Follow the Configuration Wizard.
+5. To launch, double-click `mac/run_mac.command`.
 
-# To start the agent:
-./linux/run.sh
-```
+### 🐧 Linux Setup
+1. Clone the repository or copy to USB.
+2. Open your terminal in the `voidclaw` directory.
+3. Run: `chmod +x linux/install.sh linux/run.sh && ./linux/install.sh`
+4. To launch, use: `./linux/run.sh`
 
 ---
 

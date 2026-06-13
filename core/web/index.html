@@ -84,7 +84,7 @@
         .delete-chat:hover { color: #ef4444 !important; }
 
         /* Workspace */
-        .workspace { flex: 1; display: flex; flex-direction: column; position: relative; width: 100%; transition: width 0.3s ease; }
+        .workspace { flex: 1; display: flex; flex-direction: column; position: relative; width: 100%; transition: width 0.3s ease; overflow: hidden; }
 
         .top-nav {
             padding: 16px 32px; border-bottom: 1px solid var(--border-main);
@@ -103,9 +103,11 @@
 
         /* Dashboard View */
         .dashboard-view {
-            flex: 1; padding: 40px; overflow-y: auto; display: none; flex-direction: column; gap: 32px;
-            width: 100%; max-width: 1300px; margin: 0 auto; animation: fadeIn 0.4s ease;
+            flex: 1; padding: 40px; overflow-y: auto; display: none; flex-direction: column;
+            width: 100%; animation: fadeIn 0.4s ease;
         }
+        .dashboard-container { width: 100%; max-width: 1300px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; }
+
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
         .stat-card {
             background: var(--bg-card); border: 1px solid var(--border-main); padding: 24px; border-radius: 20px;
@@ -138,7 +140,9 @@
         .btn-kill:hover { background: #ef4444; color: white; }
 
         /* Welcome & Chat Views */
-        .welcome-view { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px; text-align: center; width: 100%; max-width: 950px; margin: 0 auto; }
+        .welcome-view { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px; text-align: center; width: 100%; overflow-y: auto; }
+        .welcome-container { max-width: 950px; width: 100%; display: flex; flex-direction: column; align-items: center; }
+
         .greeting { font-size: 36px; font-weight: 700; margin-bottom: 16px; background: linear-gradient(135deg, var(--accent), #fbbf24); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .sub-greeting { color: var(--text-secondary); margin-bottom: 48px; font-size: 18px; max-width: 500px; }
         .suggestions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; width: 100%; }
@@ -154,7 +158,8 @@
         .msg-agent .bubble { background: var(--msg-agent); border: 1px solid var(--border-main); color: var(--text-primary); border-bottom-left-radius: 4px; }
 
         /* Input & UI elements */
-        .input-bar { padding: 32px; max-width: 900px; margin: 0 auto; width: 100%; }
+        .input-bar { padding: 32px; width: 100%; z-index: 10; }
+        .input-container { max-width: 900px; margin: 0 auto; width: 100%; }
         .input-box { background: var(--bg-sidebar); border: 1px solid var(--border-main); border-radius: 20px; padding: 8px 16px; display: flex; align-items: flex-end; gap: 12px; box-shadow: var(--shadow); transition: 0.3s; }
         .input-box textarea { flex: 1; background: transparent; border: none; padding: 12px 0; color: var(--text-primary); outline: none; font-size: 16px; font-family: inherit; resize: none; max-height: 180px; }
         .btn-send { background: var(--accent); color: white; border: none; width: 42px; height: 42px; border-radius: 14px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; margin-bottom: 4px; }
@@ -235,85 +240,91 @@
 
         <!-- Dashboard View -->
         <main class="dashboard-view" id="dashboardView">
-            <div style="margin-bottom: 40px;">
-                <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 8px;">Mission Control</h2>
-                <p style="color: var(--text-secondary);">Real-time cognitive metrics and autonomous task management.</p>
-            </div>
-            
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <span class="stat-label">Tokens Processed</span>
-                    <span class="stat-value" id="statTokens">0</span>
-                    <div class="stat-footer">Cumulative Utilization <i class="fas fa-coins"></i></div>
+            <div class="dashboard-container">
+                <div style="margin-bottom: 40px;">
+                    <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 8px;">Mission Control</h2>
+                    <p style="color: var(--text-secondary);">Real-time cognitive metrics and autonomous task management.</p>
                 </div>
-                <div class="stat-card">
-                    <span class="stat-label">Memory Uptime</span>
-                    <span class="stat-value" id="statUptime">0:00:00</span>
-                    <div class="stat-footer">Continuous Session <i class="fas fa-clock"></i></div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-label">Tokens Processed</span>
+                        <span class="stat-value" id="statTokens">0</span>
+                        <div class="stat-footer">Cumulative Utilization <i class="fas fa-coins"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Memory Uptime</span>
+                        <span class="stat-value" id="statUptime">0:00:00</span>
+                        <div class="stat-footer">Continuous Session <i class="fas fa-clock"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Cognitive Load (CPU)</span>
+                        <span class="stat-value" id="statCpu">0%</span>
+                        <div class="resource-bar"><div class="resource-fill" id="barCpu" style="width: 0%"></div></div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Neural RAM</span>
+                        <span class="stat-value" id="statRam">0%</span>
+                        <div class="resource-bar"><div class="resource-fill" id="barRam" style="width: 0%"></div></div>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <span class="stat-label">Cognitive Load (CPU)</span>
-                    <span class="stat-value" id="statCpu">0%</span>
-                    <div class="resource-bar"><div class="resource-fill" id="barCpu" style="width: 0%"></div></div>
-                </div>
-                <div class="stat-card">
-                    <span class="stat-label">Neural RAM</span>
-                    <span class="stat-value" id="statRam">0%</span>
-                    <div class="resource-bar"><div class="resource-fill" id="barRam" style="width: 0%"></div></div>
-                </div>
-            </div>
 
-            <div class="dashboard-row">
-                <div class="chart-container">
-                    <h3 class="card-title"><i class="fas fa-chart-line" style="color: var(--accent)"></i> Cognitive Activity</h3>
-                    <canvas id="activityChart" height="120"></canvas>
-                </div>
-                <div class="stat-card">
-                    <h3 class="card-title"><i class="fas fa-folder-tree" style="color: var(--accent)"></i> Workspace Health</h3>
-                    <div style="display: flex; flex-direction: column; gap: 20px;">
-                        <div>
-                            <span class="stat-label" style="font-size: 11px;">Storage Utilization</span>
-                            <div class="stat-value" style="font-size: 22px;" id="statWsSize">0 MB</div>
-                        </div>
-                        <div>
-                            <span class="stat-label" style="font-size: 11px;">Stored Neural Logs</span>
-                            <div class="stat-value" style="font-size: 22px;" id="statWsFiles">0 Files</div>
+                <div class="dashboard-row">
+                    <div class="chart-container">
+                        <h3 class="card-title"><i class="fas fa-chart-line" style="color: var(--accent)"></i> Cognitive Activity</h3>
+                        <canvas id="activityChart" height="120"></canvas>
+                    </div>
+                    <div class="stat-card">
+                        <h3 class="card-title"><i class="fas fa-folder-tree" style="color: var(--accent)"></i> Workspace Health</h3>
+                        <div style="display: flex; flex-direction: column; gap: 20px;">
+                            <div>
+                                <span class="stat-label" style="font-size: 11px;">Storage Utilization</span>
+                                <div class="stat-value" style="font-size: 22px;" id="statWsSize">0 MB</div>
+                            </div>
+                            <div>
+                                <span class="stat-label" style="font-size: 11px;">Stored Neural Logs</span>
+                                <div class="stat-value" style="font-size: 22px;" id="statWsFiles">0 Files</div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="dashboard-row">
-                <div class="stat-card" style="flex: 1;">
-                    <h3 class="card-title"><i class="fas fa-bolt-lightning" style="color: var(--accent)"></i> Task Command Center</h3>
-                    <div id="taskList">
-                        <p style="color: var(--text-muted); font-size: 13px;">No active autonomous tasks detected.</p>
+                <div class="dashboard-row">
+                    <div class="stat-card" style="flex: 1;">
+                        <h3 class="card-title"><i class="fas fa-bolt-lightning" style="color: var(--accent)"></i> Task Command Center</h3>
+                        <div id="taskList">
+                            <p style="color: var(--text-muted); font-size: 13px;">No active autonomous tasks detected.</p>
+                        </div>
                     </div>
-                </div>
-                <div class="stat-card">
-                    <h3 class="card-title"><i class="fas fa-network-wired" style="color: var(--accent)"></i> Channels</h3>
-                    <div id="channelList" style="display: flex; flex-direction: column; gap: 12px;"></div>
+                    <div class="stat-card">
+                        <h3 class="card-title"><i class="fas fa-network-wired" style="color: var(--accent)"></i> Channels</h3>
+                        <div id="channelList" style="display: flex; flex-direction: column; gap: 12px;"></div>
+                    </div>
                 </div>
             </div>
         </main>
 
         <main class="welcome-view" id="welcomeView">
-            <div class="greeting" id="greetingText">Good morning, Commander</div>
-            <div class="sub-greeting">Initiate a transmission or select an archived session.</div>
-            <div class="suggestions-grid">
-                <div class="suggestion-card" onclick="useSuggestion('Summarize the top global news for today.')"><i class="fas fa-newspaper" style="color:var(--accent)"></i><span>Daily Briefing</span></div>
-                <div class="suggestion-card" onclick="useSuggestion('Check the weather in London.')"><i class="fas fa-cloud-sun" style="color:var(--accent)"></i><span>Weather Sync</span></div>
-                <div class="suggestion-card" onclick="useSuggestion('List the files in my workspace.')"><i class="fas fa-folder-open" style="color:var(--accent)"></i><span>Files</span></div>
-                <div class="suggestion-card" onclick="useSuggestion('Remind me to drink water every hour.')"><i class="fas fa-clock" style="color:var(--accent)"></i><span>Set Reminder</span></div>
+            <div class="welcome-container">
+                <div class="greeting" id="greetingText">Good morning, Commander</div>
+                <div class="sub-greeting">Initiate a transmission or select an archived session.</div>
+                <div class="suggestions-grid">
+                    <div class="suggestion-card" onclick="useSuggestion('Summarize the top global news for today.')"><i class="fas fa-newspaper" style="color:var(--accent)"></i><span>Daily Briefing</span></div>
+                    <div class="suggestion-card" onclick="useSuggestion('Check the weather in London.')"><i class="fas fa-cloud-sun" style="color:var(--accent)"></i><span>Weather Sync</span></div>
+                    <div class="suggestion-card" onclick="useSuggestion('List the files in my workspace.')"><i class="fas fa-folder-open" style="color:var(--accent)"></i><span>Files</span></div>
+                    <div class="suggestion-card" onclick="useSuggestion('Remind me to drink water every hour.')"><i class="fas fa-clock" style="color:var(--accent)"></i><span>Set Reminder</span></div>
+                </div>
             </div>
         </main>
 
         <main class="chat-view" id="chatView"></main>
 
         <footer class="input-bar" id="inputArea">
-            <div class="input-box">
-                <textarea id="userInput" placeholder="Type a message (Shift+Enter for new line)..." rows="1" oninput="autoGrow(this)" onkeydown="handleKey(event)"></textarea>
-                <button class="btn-send" onclick="sendMessage()"><i class="fas fa-arrow-up"></i></button>
+            <div class="input-container">
+                <div class="input-box">
+                    <textarea id="userInput" placeholder="Type a message (Shift+Enter for new line)..." rows="1" oninput="autoGrow(this)" onkeydown="handleKey(event)"></textarea>
+                    <button class="btn-send" onclick="sendMessage()"><i class="fas fa-arrow-up"></i></button>
+                </div>
             </div>
         </footer>
     </div>
@@ -328,6 +339,8 @@
         const systemPrompt = document.getElementById('systemPrompt');
         const temperature = document.getElementById('temperature');
         let activityChart = null;
+        let currentView = 'welcome';
+        let previousView = 'welcome';
 
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('collapsed'); }
         
@@ -342,7 +355,10 @@
             document.getElementById('settingsModal').style.display = 'flex'; 
         }
 
-        function closeSettings() { document.getElementById('settingsModal').style.display = 'none'; }
+        function closeSettings() { 
+            document.getElementById('settingsModal').style.display = 'none'; 
+        }
+
         function updateTempLabel(val) { document.getElementById('tempVal').innerText = val; }
         function autoGrow(element) { element.style.height = "auto"; element.style.height = (element.scrollHeight) + "px"; }
 
@@ -375,13 +391,19 @@
         }
 
         function showView(view) {
+            if (view === 'dashboard' && currentView === 'dashboard') {
+                view = previousView;
+            } else {
+                if (currentView !== 'dashboard') previousView = currentView;
+                currentView = view;
+            }
+
             welcomeView.style.display = 'none';
             chatView.style.display = 'none';
             dashboardView.style.display = 'none';
             document.getElementById('inputArea').style.display = 'block';
             
             document.getElementById('navNew').classList.remove('active');
-            document.getElementById('navDash').classList.remove('active');
 
             if (view === 'welcome') {
                 welcomeView.style.display = 'flex';
@@ -391,7 +413,6 @@
             } else if (view === 'dashboard') {
                 dashboardView.style.display = 'flex';
                 document.getElementById('inputArea').style.display = 'none';
-                document.getElementById('navDash').classList.add('active');
                 updateDashboard();
             }
         }
@@ -624,16 +645,13 @@
 
         function handleKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
         
-        // Notifications
         const eventSource = new EventSource('/notifications');
         eventSource.onmessage = (e) => {
             if (e.data === 'keep-alive') return;
             const data = JSON.parse(e.data);
             if (data.content) {
                 if (chatView.style.display === 'flex') addMessage(data.content, 'agent');
-                else {
-                    showToast("🔔 Reminder triggered");
-                }
+                else { showToast("🔔 Reminder triggered"); }
             }
         };
 
