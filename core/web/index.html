@@ -354,7 +354,8 @@
             <div class="input-container">
                 <div class="input-box">
                     <textarea id="userInput" placeholder="Type a message (Shift+Enter for new line)..." rows="1" oninput="autoGrow(this)" onkeydown="handleKey(event)"></textarea>
-                    <button class="btn-send" onclick="sendMessage()"><i class="fas fa-arrow-up"></i></button>
+                    <button class="btn-send" id="stopBtn" onclick="stopGeneration()" style="display: none; background: #ef4444;"><i class="fas fa-stop"></i></button>
+                    <button class="btn-send" id="sendBtn" onclick="sendMessage()"><i class="fas fa-arrow-up"></i></button>
                 </div>
             </div>
         </footer>
@@ -557,12 +558,24 @@
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
+        async function stopGeneration() {
+            try {
+                await fetch('/stop', { method: 'POST' });
+                showToast("Transmission Halted");
+            } catch (e) {}
+        }
+
         async function sendMessage() {
             const text = userInput.value.trim();
             if (!text) return;
             showView('chat');
             addMessage(text, 'user');
             userInput.value = ''; userInput.style.height = "auto";
+
+            const sendBtn = document.getElementById('sendBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            sendBtn.style.display = 'none';
+            stopBtn.style.display = 'block';
 
             // Show Loading Indicator
             const loadingIndicator = document.createElement('div');
@@ -622,6 +635,10 @@
             } catch (e) { 
                 loadingIndicator.style.display = 'none';
                 addMessage("CRITICAL TRANSMISSION FAULT.", 'agent'); 
+            } finally {
+                sendBtn.style.display = 'block';
+                stopBtn.style.display = 'none';
+                loadingIndicator.style.display = 'none';
             }
         }
 

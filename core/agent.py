@@ -47,6 +47,7 @@ class VoidClawAgent:
         self.start_time = datetime.now()
         self.total_tokens = 0
         self.tool_usage = {}
+        self.interrupted = False
 
         # Scheduler (Initialized but not started yet)
         try:
@@ -397,6 +398,10 @@ Respond normally for final answers.
                 print(f"\n{self.ORANGE}{self.BOLD}{self.LOGO}   VOIDCLAW (WEB){self.RESET} {self.DIM}»{self.RESET} Streaming response...")
                 yield "START_STREAM"
                 async for chunk in self.model.generate_stream(context, self.system_prompt):
+                    if self.interrupted:
+                        yield f"CHUNK:\n\n[TRANSMISSION INTERRUPTED BY USER]"
+                        self.interrupted = False
+                        break
                     final_text += chunk
                     yield f"CHUNK:{chunk}"
                 self.log_chat("VOIDCLAW_RESPONSE", final_text)

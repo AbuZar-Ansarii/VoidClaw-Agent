@@ -123,6 +123,11 @@ def new_session():
     msg = agent.clear_session()
     return jsonify({'message': msg})
 
+@app.route('/stop', methods=['POST'])
+def stop_generation():
+    agent.interrupted = True
+    return jsonify({'message': 'Interruption signal sent.'})
+
 @app.route('/notifications')
 def notifications():
     def stream():
