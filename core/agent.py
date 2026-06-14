@@ -292,8 +292,6 @@ Tools:
 - list_tasks: (List all scheduled autonomous tasks)
 - remove_task: keyword (Remove a task using a keyword from its instruction, e.g., 'blink' or 'water')
 - remove_all_tasks: (Cancel all active background tasks)
-- remind_me: message, time_args (Shortcut to schedule a reminder)
-- stop_reminders: keyword (Remove a specific reminder)
 
 Autonomous Operation:
 You can schedule yourself to perform tasks 24/7. 
@@ -345,6 +343,11 @@ Respond normally for final answers.
                     
                     print(f"{self.GREEN}{self.BOLD}👁  OBSERVE{self.RESET} {self.DIM}»{self.RESET} Task Success")
                     
+                    if source == "AUTO":
+                        # If an autonomous task results in a final answer during tool use (unlikely but possible)
+                        # or if we want to log the observation as the final result for simple tasks.
+                        pass
+
                     self.log_chat("VOIDCLAW_THOUGHT", thought)
                     self.log_chat("VOIDCLAW_ACTION", f"Tool: {tool_call['tool']}")
                     self.log_chat("OBSERVATION", observation)
@@ -433,7 +436,6 @@ async def terminal_loop(agent):
             # Safe prompt printing and reading to prevent blocking the async loop
             print(f"\033[38;5;214m\033[1m❯\033[0m ", end="", flush=True)
             user_input = await loop.run_in_executor(None, sys.stdin.readline)
-            if not user_input: break
             user_input = user_input.strip()
             
             if user_input.lower() in ['exit', 'quit']:
@@ -477,27 +479,21 @@ async def main():
     # Telegram Setup
     token = config.get('telegram_token')
     if token and token != "YOUR_TELEGRAM_BOT_TOKEN":
-        try:
-            application = ApplicationBuilder().token(token).build()
-            agent.tg_app = application # Store app for proactive messages
+        application = ApplicationBuilder().token(token).build()
+        agent.tg_app = application # Store app for proactive messages
+        
+        async def handle_tg(update: Update, context: ContextTypes.DEFAULT_TYPE):
+            if not update.message or not update.message.text: return
+            agent.last_tg_chat_id = update.effective_chat.id # Store last chat ID
+            print(f"\n\033[38;5;214m[TELEGRAM]\033[0m Incoming transmission from {update.effective_user.first_name}...")
+            reply = await agent.process_message(update.message.text, source="TG")
+            await update.message.reply_text(reply)
             
-            async def handle_tg(update: Update, context: ContextTypes.DEFAULT_TYPE):
-                if not update.message or not update.message.text: return
-                agent.last_tg_chat_id = update.effective_chat.id # Store last chat ID
-                print(f"\n\033[38;5;214m[TELEGRAM]\033[0m Incoming transmission from {update.effective_user.first_name}...")
-                reply = await agent.process_message(update.message.text, source="TG")
-                await update.message.reply_text(reply)
-                
-            application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), handle_tg))
-            await application.initialize()
-            await application.start()
-            await application.updater.start_polling()
-            print(f"\033[92m[+] Telegram Bot active.\033[0m")
-            await terminal_loop(agent)
-        except Exception as e:
-            print(f"\n\033[91m[!] Telegram Setup Failed: {e}\033[0m")
-            print("\033[93m[*] Continuing in Terminal + Web mode.\033[0m")
-            await terminal_loop(agent)
+        application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), handle_tg))
+        await application.initialize()
+        await application.start()
+        await application.updater.start_polling()
+        await terminal_loop(agent)
     else:
         print("\033[93m[!] Telegram token not set. Running in Terminal + Web mode.\033[0m")
         await terminal_loop(agent)
