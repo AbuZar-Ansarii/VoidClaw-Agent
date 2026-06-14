@@ -1,10 +1,11 @@
 <div align="center">
   <h1>𒆙 VoidClaw</h1>
-  <p><b>An Evolutionary, Cross-Platform Autonomous AI Agent</b></p>
+  <p><b>The Ultimate Evolutionary, Cross-Platform Autonomous AI Command Center</b></p>
   <p>
     <img src="https://img.shields.io/badge/Python-3.10+-blue.svg" alt="Python" />
     <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20Mac%20%7C%20Linux%20%7C%20Android-orange.svg" alt="Platforms" />
     <img src="https://img.shields.io/badge/UI-Glassmorphism-purple.svg" alt="UI" />
+    <img src="https://img.shields.io/badge/Control-Shizuku%20Integrated-green.svg" alt="Shizuku" />
   </p>
 </div>
 
@@ -15,39 +16,33 @@
 
 ## 📖 Overview
 
-VoidClaw is a highly advanced, local-first AI agent framework. It acts as a continuous autonomous assistant that learns your preferences over time, interacts with your local filesystem, scrapes the web, and communicates with you via a premium Web UI, Telegram, or the Terminal.
+VoidClaw is a highly advanced, local-first AI agent framework. It acts as a continuous autonomous assistant that learns your preferences over time, interacts with your local filesystem, scrapes the web, and proactively manages your digital life. Designed for portability, it runs seamlessly on high-end PCs and Android phones alike, turning your device into an autonomous mission hub.
 
-## 🗂️ Project Structure
+## 🌟 Major Highlights
 
-```text
-voidclaw/
-├── core/                   # Core agent logic and routing
-│   ├── agent.py            # Main reasoning loop & ReAct logic
-│   ├── models.py           # Universal LLM adapters
-│   ├── server.py           # Waitress/Flask production web server
-│   ├── setup.py            # Interactive CLI configuration wizard
-│   ├── tools.py            # Autonomous tool implementations
-│   └── web/                
-│       └── index.html      # Premium Glassmorphism Frontend
-├── common/                 # Configurations & Memory
-│   ├── chats/              # Local chat history archives
-│   ├── config.yaml         # API keys & model selections
-│   ├── memory.md           # Agent's general memory store
-│   └── user.md             # Evolutionary user profile
-├── linux/                  # Linux launchers (.sh)
-├── mac/                    # macOS launchers (.sh)
-├── termux/                 # Android Termux scripts
-├── windows/                # Windows launchers (.bat)
-├── workspace/              # Sandboxed area for file/media operations
-└── requirements.txt        # Python dependencies
-```
+*   **📱 Android System Control (Shizuku):** VoidClaw is now integrated with **Shizuku**. It can autonomously open apps, navigate your phone (Home/Back), adjust volume, and execute raw `adb shell` commands directly from your chat.
+*   **⏰ 24/7 Proactive Autonomy:** Set reminders, briefings, or complex tasks in seconds or minutes. VoidClaw proactively "messages" you across all channels with sound notifications and unique UI transmissions when a task triggers.
+*   **🧠 Evolutionary Memory:** Automatically deduces and records your preferences, workflows, and expertise in a permanent neural vault to adapt its personality and assistance to you.
+*   **🌐 Tri-Channel Interface:** Seamlessly switch between a premium **Glassmorphism Web UI**, remote control via **Telegram**, or a high-resolution **Terminal Dashboard**. All channels are synchronized in real-time.
 
-## 🌟 Key Features
+## 🛠️ Feature Breakdown
 
-*   **🧠 Evolutionary Memory:** VoidClaw automatically deduces your preferences, workflows, and expertise, saving them to its permanent `user.md` memory vault to adapt its personality to you.
-*   **🌐 Tri-Channel Interface:** Chat with the agent via a high-end Glassmorphism **Web UI**, remotely via **Telegram**, or directly in the **Terminal**. All channels are synced in real-time.
-*   **🔌 Universal LLM Support:** Easily switch between top-tier models from **Google (Gemini), OpenAI, Claude (Anthropic), Ollama (Local), NVIDIA NIM, and OpenRouter**.
-*   **🛠️ Robust Tool Arsenal:** Includes a Python Sandbox, Local RAG Semantic Search, Media Downloader (YT-DLP), Web Scraper, and more.
+### 🤖 Autonomous Core
+- **ReAct Reasoning:** Multi-step thinking loop with live "Thought" transparency.
+- **Universal LLM Adapter:** Support for **Gemini 1.5, GPT-4o, Claude 3.5, Ollama (Local), NVIDIA NIM, and OpenRouter**.
+- **Mission Dashboard:** Real-time monitoring of CPU, RAM, Token usage, and active autonomous tasks.
+
+### 🧰 The Tool Arsenal
+- **Android Control:** Launch apps (e.g., YouTube), simulate hardware buttons, and touch events via Shizuku.
+- **Advanced Web Tools:** Multi-stage web scraper and search with a stealth fallback system for Termux.
+- **Media Suite:** High-quality YouTube downloading (Video/Audio) and automatic media conversion.
+- **File Intelligence:** Sandboxed filesystem access and **Local RAG Semantic Search** across your workspace documents.
+- **Smart Scheduler:** Human-friendly reminder system ("remind me every 30s") and professional Cron support.
+
+### 🖥️ Premium Web Command Center
+- **Mobile-Responsive Design:** Fully optimized for Android browsers with a slide-out Mission Hub and floating input.
+- **Operational Control:** Mid-response interruption (Stop Button) and secure document attachments.
+- **Memory Vault:** Browse, search, and instantly restore previous neural logs from the sidebar.
 
 ---
 
@@ -55,64 +50,47 @@ voidclaw/
 
 VoidClaw is designed to be **100% portable**. 
 
-### 📱 Android (Termux) - Easy Setup Guide
+### 📱 Android (Termux) - The Mobile Command Center
 
-Turn your Android phone into an autonomous AI Command Center!
-
-1.  **Install Termux:** Download and install [Termux from F-Droid](https://f-droid.org/en/packages/com.termux/) (Do not use the Google Play Store version, it is deprecated).
-2.  **Open Termux and run the following commands one by one:**
+1.  **Install Termux:** Download [Termux from F-Droid](https://f-droid.org/en/packages/com.termux/).
+2.  **Run the Quick Setup:**
     ```bash
-    # Step 1: Update packages and enable required repositories
     pkg update -y && pkg upgrade -y
-    pkg install x11-repo tur-repo -y
     pkg install git -y
-
-    # Step 2: Clone the VoidClaw repository
     git clone https://github.com/AbuZar-Ansarii/VoidClaw-Agent.git
     cd VoidClaw-Agent
-
-    # Step 3: Make the installer executable and run it
     chmod +x termux/install.sh termux/run.sh
     ./termux/install.sh
     ```
-3.  **Configure:** The installer will launch a beautiful Orange Setup Wizard. Follow the prompts to select your LLM provider and paste your API key.
-4.  **Run:** To start the agent at any time, just open Termux and type:
-    ```bash
-    cd VoidClaw-Agent
-    ./termux/run.sh
-    ```
+3.  **Enable Android Control (Optional):**
+    *   Set up [Shizuku](https://shizuku.rikka.app/) on your phone.
+    *   In Termux, run: `curl -sL https://raw.githubusercontent.com/RikkaApps/Shizuku-API/master/rish/rish.sh > /data/data/com.termux/files/usr/bin/rish && chmod +x /data/data/com.termux/files/usr/bin/rish`
+    *   Authorize Termux in the Shizuku app.
 
 ### 🪟 Windows Setup
-1. Clone the repository.
-2. Double-click `windows\install.bat`.
-3. Follow the Configuration Wizard.
-4. Double-click `windows\run.bat` to launch the agent.
+1. Double-click `windows\install.bat` and follow the wizard.
+2. Double-click `windows\run.bat` to launch.
 
-### 🍎 macOS Setup (Silicon & Intel)
-1. Clone the repository or copy to USB.
-2. Open the `mac` folder.
-3. Right-click `install_mac.command` and select **Open** (grant permission if asked).
-4. Follow the Configuration Wizard.
-5. To launch, double-click `mac/run_mac.command`.
-
-### 🐧 Linux Setup
-1. Clone the repository or copy to USB.
-2. Open your terminal in the `voidclaw` directory.
-3. Run: `chmod +x linux/install.sh linux/run.sh && ./linux/install.sh`
-4. To launch, use: `./linux/run.sh`
+### 🍎 macOS / 🐧 Linux Setup
+1. Run: `chmod +x linux/install.sh linux/run.sh && ./linux/install.sh`
+2. To launch: `./linux/run.sh`
 
 ---
 
-## 🖥️ The Web Command Center
+## 🗂️ Project Structure
 
-When you launch VoidClaw, a production-grade Web Server starts automatically. Your browser will open the Web UI (`http://localhost:5000`).
-
-*   **Deep Space Dark Mode:** A stunning UI with orange/amber accents.
-*   **Real-Time Streaming:** Responses stream word-by-word with live "Thinking" indicators.
-*   **Settings Modal:** Tweak the agent's creativity (Temperature) and System Prompt on the fly.
-*   **Memory Vault:** Browse and instantly restore previous chat sessions from the sidebar.
+```text
+voidclaw/
+├── core/                   # Core Brain (Agent, Models, Tools)
+├── common/                 # Neural Vault (Memory, Logs, Configs)
+├── linux/ | mac/ | termux/ # Cross-Platform Launchers
+├── windows/                # Windows Execution Suite
+├── workspace/              # Secure File Sandbox
+└── requirements.txt        # System Dependencies
+```
 
 ---
 <div align="center">
-  <i>Conceptualized and Built by Mohd Abuzar</i>
+  <i>Conceptualized and Built by Mohd Abuzar</i><br>
+  <b>VoidClaw: Autonomous. Evolutionary. Universal.</b>
 </div>
