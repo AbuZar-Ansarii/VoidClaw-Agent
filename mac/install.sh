@@ -40,7 +40,12 @@ source .venv/bin/activate
 
 echo -e "${ORANGE}[*] Installing dependencies...${RESET}"
 pip install --upgrade pip
-pip install -r requirements.txt
+
+# Install core dependencies
+pip install pyyaml requests python-telegram-bot ollama duckduckgo-search python-dotenv flask flask-cors waitress youtube-transcript-api beautifulsoup4 yt-dlp apscheduler psutil numpy
+
+# Install scikit-learn (can be heavy)
+pip install scikit-learn || echo -e "${RED}[!] Failed to install scikit-learn. Local RAG search will be disabled.${RESET}"
 
 echo -e "${AMBER}[*] Starting Configuration Wizard...${RESET}"
 python3 core/setup.py

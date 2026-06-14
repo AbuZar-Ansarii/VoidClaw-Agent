@@ -51,7 +51,15 @@ if not exist .venv (
 call .venv\Scripts\activate
 echo %ORANGE%[*] Installing/Updating dependencies...%RESET%
 python -m pip install --upgrade pip --quiet
+
+:: Install core dependencies first
+echo %ORANGE%[*] Installing core dependencies...%RESET%
+pip install pyyaml requests python-telegram-bot ollama duckduckgo-search python-dotenv flask flask-cors waitress youtube-transcript-api beautifulsoup4 yt-dlp apscheduler psutil numpy --quiet
+
+:: Try to install everything else
+echo %ORANGE%[*] Finalizing installation...%RESET%
 pip install -r requirements.txt --quiet
+
 echo %GREEN%[+] Dependencies installed!%RESET%
 echo.
 

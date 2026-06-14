@@ -138,8 +138,17 @@ def run_setup():
     with open(config_path, 'w') as f:
         yaml.dump(config, f, default_flow_style=False)
 
+    run_cmd = "windows\\run.bat"
+    if os.name != 'nt':
+        if os.path.exists('/data/data/com.termux'): # Termux detection
+            run_cmd = "./termux/run.sh"
+        elif sys.platform == 'darwin':
+            run_cmd = "./mac/run.sh"
+        else:
+            run_cmd = "./linux/run.sh"
+
     print(f"\n{GREEN}[+] Configuration saved successfully!{RESET}")
-    print(f"{AMBER}[!] Setup complete. You can now run the agent using windows\\run.bat{RESET}\n")
+    print(f"{AMBER}[!] Setup complete. You can now run the agent using {run_cmd}{RESET}\n")
 
 if __name__ == "__main__":
     try:
