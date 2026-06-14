@@ -415,12 +415,12 @@ def print_dashboard(config):
        ╚████╔╝ ╚██████╔╝██║██████╔╝╚██████╗███████╗██║  ██║╚███╔███╔╝
         ╚═══╝   ╚═════╝ ╚═╝╚═════╝  ╚═════╝╚══════╝╚═╝  ╚═╝ ╚══╝╚══╝
 
-           A U T O N O M O U S   A I   C O M M A N D   C E N T E R
+           A U T O N O M O U S   C O M M A N D   C E N T E R
     """
-    print(f"{ORANGE}━"*90)
+    print(f"{ORANGE}━"*64)
     print(f"{ORANGE}{logo}{RESET}")
-    print(f"{AMBER}                   AI Agent for Windows, Mac, Android & Linux{RESET}")
-    print(f"{ORANGE}━"*90 + RESET)
+    print(f"{AMBER}           AI Agent for Windows, Mac, Android & Linux{RESET}")
+    print(f"{ORANGE}━"*64 + RESET)
     print(f"{ORANGE}{BOLD}𒆙   VoidClaw Hybrid Interface v1.5.0{RESET}")
     print(f"{AMBER}PROVIDER: {RESET}{config['default_provider'].upper()} | {AMBER}MODEL: {RESET}{config[config['default_provider']]['model']}")
     print(f"{AMBER}CHANNELS: {GREEN}TERMINAL{RESET} & {GREEN}TELEGRAM{RESET} & {GREEN}WEB UI{RESET}")
