@@ -26,6 +26,9 @@ echo -e "${ORANGE}==============================================================
 # Ensure we are in the root directory
 cd "$(dirname "$0")/.."
 
+# Fix for Rust/Maturin build errors (e.g. pydantic-core)
+export ANDROID_API_LEVEL=24
+
 echo -e "${ORANGE}[*] Updating system packages...${RESET}"
 pkg update -y && pkg upgrade -y
 
@@ -34,8 +37,10 @@ pkg install tur-repo -y
 
 echo -e "${ORANGE}[*] Installing system dependencies (Rust, Clang & Math Libs)...${RESET}"
 # Rust is required for pydantic-core and modern Python wheels
-# pkg install pre-built versions of heavy libraries to save hours of compilation
-pkg install python git clang make rust binutils python-psutil python-numpy python-cryptography -y
+# pkg install pre-built versions of heavy libraries to avoid maturin/compilation errors
+pkg install python git clang make rust binutils \
+    python-psutil python-numpy python-cryptography \
+    python-pydantic python-httpx -y
 
 echo -e "${ORANGE}[*] Setting up virtual environment...${RESET}"
 # Create venv with system site packages to use pkg-installed heavy dependencies
