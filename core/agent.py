@@ -101,12 +101,16 @@ class VoidClawAgent:
         except: pass
 
         # System & Workspace
+        cpu_usage = 0.0
+        ram_usage = 0.0
         if psutil:
-            cpu_usage = psutil.cpu_percent()
-            ram_usage = psutil.virtual_memory().percent
-        else:
-            cpu_usage = 0.0
-            ram_usage = 0.0
+            try:
+                cpu_usage = psutil.cpu_percent()
+                ram_usage = psutil.virtual_memory().percent
+            except PermissionError:
+                pass # Restricted on some Android versions
+            except Exception:
+                pass
         ws_files = 0
         ws_size = 0
         try:

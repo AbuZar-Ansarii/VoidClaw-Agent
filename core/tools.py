@@ -103,11 +103,41 @@ class ToolManager:
 
     def web_search(self, query):
         try:
+            # Try the standard library approach
             with DDGS() as ddgs:
                 results = [r for r in ddgs.text(query, max_results=5)]
-                return "\n\n".join([f"Title: {r['title']}\nLink: {r['href']}\nSnippet: {r['body']}" for r in results])
+                if results:
+                    return "\n\n".join([f"Title: {r['title']}\nLink: {r['href']}\nSnippet: {r['body']}" for r in results])
         except Exception as e:
-            return str(e)
+            # Fallback for Termux/Android where DDGS might panic
+            try:
+                import requests
+                from bs4 import BeautifulSoup
+                
+                headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"}
+                url = f"https://html.duckduckgo.com/html/?q={query}"
+                resp = requests.get(url, headers=headers, timeout=10)
+                
+                if resp.status_code == 200:
+                    soup = BeautifulSoup(resp.content, "html.parser")
+                    results = []
+                    for result in soup.find_all("div", class_="result")[:5]:
+                        title_tag = result.find("a", class_="result__a")
+                        snippet_tag = result.find("a", class_="result__snippet")
+                        if title_tag:
+                            title = title_tag.get_text()
+                            link = title_tag.get("href")
+                            snippet = snippet_tag.get_text() if snippet_tag else "No snippet available."
+                            results.append(f"Title: {title}\nLink: {link}\nSnippet: {snippet}")
+                    
+                    if results:
+                        return "\n\n".join(results)
+            except:
+                pass
+            
+            return f"Search Error: Library compatibility issue on this device. Fallback also failed."
+        
+        return "No results found."
 
     def get_memory(self):
         try:
