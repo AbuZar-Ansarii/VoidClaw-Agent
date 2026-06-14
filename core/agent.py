@@ -6,7 +6,10 @@ import asyncio
 import threading
 import uuid
 import sys
-import psutil
+try:
+    import psutil
+except ImportError:
+    psutil = None
 from datetime import datetime
 from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, MessageHandler, filters
@@ -91,8 +94,12 @@ class VoidClawAgent:
         except: pass
 
         # System & Workspace
-        cpu_usage = psutil.cpu_percent()
-        ram_usage = psutil.virtual_memory().percent
+        if psutil:
+            cpu_usage = psutil.cpu_percent()
+            ram_usage = psutil.virtual_memory().percent
+        else:
+            cpu_usage = 0.0
+            ram_usage = 0.0
         ws_files = 0
         ws_size = 0
         try:
