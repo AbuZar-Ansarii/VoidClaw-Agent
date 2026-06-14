@@ -353,6 +353,8 @@
         <footer class="input-bar" id="inputArea">
             <div class="input-container">
                 <div class="input-box">
+                    <label for="fileInput" style="cursor: pointer; color: var(--text-secondary); padding: 8px; transition: 0.2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-secondary)'"><i class="fas fa-paperclip"></i></label>
+                    <input type="file" id="fileInput" style="display: none;" onchange="handleFileUpload(this)">
                     <textarea id="userInput" placeholder="Type a message (Shift+Enter for new line)..." rows="1" oninput="autoGrow(this)" onkeydown="handleKey(event)"></textarea>
                     <button class="btn-send" id="stopBtn" onclick="stopGeneration()" style="display: none; background: #ef4444;"><i class="fas fa-stop"></i></button>
                     <button class="btn-send" id="sendBtn" onclick="sendMessage()"><i class="fas fa-arrow-up"></i></button>
@@ -744,6 +746,30 @@
         };
 
         function useSuggestion(text) { userInput.value = text; autoGrow(userInput); sendMessage(); }
+
+        async function handleFileUpload(input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            showToast("Uploading payload...");
+            try {
+                const res = await fetch('/upload', { method: 'POST', body: formData });
+                const data = await res.json();
+                if (res.ok) {
+                    showToast("Payload Synced");
+                    addMessage(`[FILE UPLOADED] ${file.name}`, 'user');
+                    // Automatically ask agent to acknowledge
+                    userInput.value = `I've uploaded a file named "${file.name}". Please acknowledge and let me know if you can see it in the workspace.`;
+                    sendMessage();
+                } else {
+                    showToast("Upload Failed");
+                }
+            } catch (e) { showToast("Network Error"); }
+            input.value = ''; // Reset
+        }
 
         init();
     </script>
