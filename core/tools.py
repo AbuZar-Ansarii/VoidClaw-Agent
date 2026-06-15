@@ -44,22 +44,40 @@ class ToolManager:
         return f"Tool {tool_name} not found."
 
     def android_control(self, action, target=""):
-        """Controls Android system using Shizuku (rish)"""
+        """Controls Android system using Shizuku (rish) with Auto-Provisioning"""
         is_android = os.path.exists('/data/data/com.termux')
         if not is_android:
             return "Error: Android control is only available on Android/Termux environments."
 
-        # Check if rish is in path or common locations
+        # 1. Automatic Shizuku Provisioning
         rish_path = shutil.which('rish')
         if not rish_path:
-            # Check local bin
-            local_bin = '/data/data/com.termux/files/usr/bin/rish'
-            if os.path.exists(local_bin):
-                rish_path = local_bin
-            else:
-                return "Error: 'rish' not found. Please set up Shizuku in Termux first: 1. Export files from Shizuku app. 2. Save to 'Shizuku' folder in storage. 3. Run: termux-setup-storage && cp /sdcard/Shizuku/* $PREFIX/bin/ && chmod +x $PREFIX/bin/rish"
+            # Check common locations
+            paths = ['/data/data/com.termux/files/usr/bin/rish', '/data/data/com.termux/files/home/.local/bin/rish']
+            for p in paths:
+                if os.path.exists(p):
+                    rish_path = p
+                    break
+            
+            if not rish_path:
+                # Try to auto-import from /sdcard/Shizuku/ (requires termux-setup-storage)
+                src_dir = '/sdcard/Shizuku'
+                dest_bin = '/data/data/com.termux/files/usr/bin'
+                
+                if os.path.exists(os.path.join(src_dir, 'rish')):
+                    try:
+                        # Auto-Provisioning Sequence
+                        os.system(f"cp {src_dir}/rish* {dest_bin}/")
+                        os.system(f"chmod +x {dest_bin}/rish")
+                        os.system(f"chmod 444 {dest_bin}/rish_shizuku.dex") # Security: must not be writable
+                        rish_path = os.path.join(dest_bin, 'rish')
+                        print(f"\033[92m[SYSTEM]\033[0m Shizuku files auto-imported successfully.")
+                    except Exception as e:
+                        return f"Error auto-importing Shizuku: {e}. Please ensure storage permission is granted."
+                else:
+                    return "Error: Shizuku not set up. Please: 1. In Shizuku app, tap 'Use in terminal' -> 'Export files'. 2. Save to 'Shizuku' folder. 3. Run 'termux-setup-storage' in Termux."
 
-        # Use monkey for reliable app launching by package name
+        # 2. Command Execution
         cmd_map = {
             "open_app": f"monkey -p {target} -c android.intent.category.LAUNCHER 1",
             "home": "input keyevent 3",
@@ -80,8 +98,7 @@ class ToolManager:
             env = os.environ.copy()
             env["RISH_APPLICATION_ID"] = "com.termux"
 
-            # Execute via sh rish to avoid 'Exec format error' on some environments
-            # This ensures the shell script is interpreted correctly even if shebang issues exist
+            # Execute via sh rish to ensure shell compatibility
             result = subprocess.run(["sh", rish_path, "-c", final_cmd], capture_output=True, text=True, timeout=15, env=env)
             
             if result.returncode == 0:
@@ -91,7 +108,7 @@ class ToolManager:
                 if not stderr and result.stdout: stderr = result.stdout.strip()
                 return f"Error from Android: {stderr if stderr else 'Unknown error'}"
         except subprocess.TimeoutExpired:
-            return "Error: Command timed out. Is Shizuku service running and authorized for Termux?"
+            return "Error: Command timed out. Is Shizuku service running?"
         except Exception as e:
             return f"Error executing rish: {str(e)}"
 
