@@ -59,8 +59,9 @@ class ToolManager:
             else:
                 return "Error: 'rish' not found. Please set up Shizuku in Termux first by running: curl -sL https://raw.githubusercontent.com/RikkaApps/Shizuku-API/master/rish/rish.sh > /data/data/com.termux/files/usr/bin/rish && chmod +x /data/data/com.termux/files/usr/bin/rish"
 
+        # Use monkey for reliable app launching by package name
         cmd_map = {
-            "open_app": f"am start -n {target} || monkey -p {target} -c android.intent.category.LAUNCHER 1",
+            "open_app": f"monkey -p {target} -c android.intent.category.LAUNCHER 1",
             "home": "input keyevent 3",
             "back": "input keyevent 4",
             "media_play_pause": "input keyevent 85",
@@ -75,16 +76,20 @@ class ToolManager:
 
         final_cmd = cmd_map[action]
         try:
-            # Execute via rish
-            result = subprocess.run([rish_path, "-c", final_cmd], capture_output=True, text=True, timeout=10)
+            # Execute via sh rish to avoid 'Exec format error' on some environments
+            # This ensures the shell script is interpreted correctly even if shebang issues exist
+            result = subprocess.run(["sh", rish_path, "-c", final_cmd], capture_output=True, text=True, timeout=15)
+            
             if result.returncode == 0:
                 return f"Success: Action '{action}' executed."
             else:
-                return f"Error: {result.stderr.strip()}"
+                stderr = result.stderr.strip()
+                if not stderr and result.stdout: stderr = result.stdout.strip()
+                return f"Error from Android: {stderr if stderr else 'Unknown error'}"
         except subprocess.TimeoutExpired:
-            return "Error: Command timed out. Is Shizuku service running?"
+            return "Error: Command timed out. Is Shizuku service running and authorized for Termux?"
         except Exception as e:
-            return f"Error: {str(e)}"
+            return f"Error executing rish: {str(e)}"
 
     def _safe_path(self, filename):
         path = os.path.abspath(os.path.join(self.workspace_dir, filename))
