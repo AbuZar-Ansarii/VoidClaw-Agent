@@ -93,6 +93,11 @@ class ToolManager:
             "volume_up": "input keyevent 24",
             "volume_down": "input keyevent 25",
             "screen_off": "input keyevent 26",
+            "flashlight_on": "cmd notification set_flashlight 1",
+            "flashlight_off": "cmd notification set_flashlight 0",
+            "brightness_set": f"settings put system screen_brightness {target}",
+            "brightness_auto": "settings put system screen_brightness_mode 1",
+            "brightness_manual": "settings put system screen_brightness_mode 0",
             "raw_shell": target
         }
 

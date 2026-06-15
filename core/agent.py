@@ -294,7 +294,7 @@ Tools:
 - remove_all_tasks: (Cancel all active background tasks)
 - remind_me: message, time_args (Shortcut to schedule a reminder)
 - stop_reminders: keyword (Remove a specific reminder)
-- android_control: action (open_app, home, back, media_play_pause, volume_up, volume_down, screen_off, raw_shell), target (package name for open_app or raw shell command)
+- android_control: action (open_app, home, back, media_play_pause, volume_up, volume_down, screen_off, flashlight_on, flashlight_off, brightness_set, brightness_auto, brightness_manual, raw_shell), target (package name for open_app, brightness value 0-255 for brightness_set, or raw shell command)
 
 Autonomous Operation:
 You can schedule yourself to perform tasks 24/7. 
@@ -302,6 +302,8 @@ Example: Use 'schedule_task' with 'interval' and '1m' to remind the user of some
 Example: Use 'schedule_task' with 'interval' and '30s' for high-frequency reminders.
 Example: Use 'schedule_task' with 'cron' and '0 8 * * *' to perform a daily morning briefing.
 Example: Use 'android_control' with 'open_app' and 'com.google.android.youtube' to open YouTube on the user's phone.
+Example: Use 'android_control' with 'flashlight_on' to turn on the phone's flashlight.
+Example: Use 'android_control' with 'brightness_set' and '150' to set screen brightness.
 Example: Use 'android_control' with 'raw_shell' and 'input tap 500 500' to simulate a touch at coordinates (500, 500).
 When a scheduled task triggers, you will receive a message from 'SYSTEM' and you should execute the instruction autonomously.
 You MUST provide a clear, final answer to the user when a task triggers. For a reminder, simply state the reminder message.
