@@ -73,11 +73,12 @@ VoidClaw is designed to be **100% portable**.
         1.  In Shizuku app, tap **"Use Shizuku in terminal apps"** -> **"Export files"**.
         2.  Save them into a folder named **"Shizuku"** in your phone's Internal Storage.
         3.  In Termux, run: `termux-setup-storage` and grant permission.
-    *   **Step D: That's it!**
-        The next time you tell VoidClaw to control your phone (e.g., *"Open YouTube"*), it will **automatically** import and configure the files for you.
+    *   **Step D: Launch VoidClaw**
+        Start the agent in Termux: `./termux/run.sh`.
+        The agent will detect the files and show: `[SYSTEM] Shizuku environment provisioned successfully.`
 
     *   **Step E: Manual Verification (Optional)**
-        Type `rish` in Termux. If it shows a shell prompt (`$`), you are ready! Type `exit` to return.
+        Exit the agent and type `rish` in Termux. If it shows a shell prompt (`$`), you are ready! Type `exit` to return.
         *(Note: Termux does NOT need to be toggled in 'Authorized applications' when using this method)*
 
 ### 🪟 Windows Setup
