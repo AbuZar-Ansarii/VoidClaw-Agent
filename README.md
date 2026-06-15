@@ -62,10 +62,22 @@ VoidClaw is designed to be **100% portable**.
     chmod +x termux/install.sh termux/run.sh
     ./termux/install.sh
     ```
-3.  **Enable Android Control (Optional):**
-    *   Set up [Shizuku](https://shizuku.rikka.app/) on your phone.
-    *   In Termux, run: `curl -sL https://raw.githubusercontent.com/RikkaApps/Shizuku-API/master/rish/rish.sh > /data/data/com.termux/files/usr/bin/rish && chmod +x /data/data/com.termux/files/usr/bin/rish`
-    *   Authorize Termux in the Shizuku app.
+3.  **Enable Android Control (Shizuku Setup):**
+    VoidClaw can control your phone (open apps, volume, home/back) via Shizuku. Follow these steps to enable it:
+
+    *   **Step A: Install Shizuku**
+        Download and install the [Shizuku App](https://shizuku.rikka.app/download/) on your phone.
+    *   **Step B: Start Shizuku Service**
+        Open the Shizuku app and start the service (usually via **Wireless Debugging** in Android Developer Options). Follow the in-app instructions.
+    *   **Step C: Set up `rish` in Termux**
+        Once Shizuku is "Running", open Termux and run this exact command:
+        ```bash
+        curl -sL https://raw.githubusercontent.com/RikkaApps/Shizuku-API/master/rish/rish.sh > /data/data/com.termux/files/usr/bin/rish && chmod +x /data/data/com.termux/files/usr/bin/rish
+        ```
+    *   **Step D: Authorize Termux**
+        Go back to the **Shizuku app** -> **Authorized applications** and toggle **ON** for Termux.
+    *   **Step E: Verify**
+        In Termux, type `rish`. If it asks for permission and then shows a shell prompt (`$`), you are ready! Type `exit` to return to VoidClaw.
 
 ### 🪟 Windows Setup
 1. Double-click `windows\install.bat` and follow the wizard.
