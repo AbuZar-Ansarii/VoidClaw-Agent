@@ -57,7 +57,7 @@ class ToolManager:
             if os.path.exists(local_bin):
                 rish_path = local_bin
             else:
-                return "Error: 'rish' not found. Please set up Shizuku in Termux first by running: curl -sL https://raw.githubusercontent.com/merbah3266/rish_installer/master/install.sh | bash"
+                return "Error: 'rish' not found. Please set up Shizuku in Termux first: 1. Export files from Shizuku app. 2. Save to 'Shizuku' folder in storage. 3. Run: termux-setup-storage && cp /sdcard/Shizuku/* $PREFIX/bin/ && chmod +x $PREFIX/bin/rish"
 
         # Use monkey for reliable app launching by package name
         cmd_map = {

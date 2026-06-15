@@ -70,15 +70,23 @@ VoidClaw is designed to be **100% portable**.
     *   **Step B: Start Shizuku Service**
         Open the Shizuku app and start the service (usually via **Wireless Debugging** in Android Developer Options). Follow the in-app instructions.
     *   **Step C: Set up `rish` in Termux**
-        Once Shizuku is "Running", open Termux and run this automated installer:
-        ```bash
-        curl -sL https://raw.githubusercontent.com/merbah3266/rish_installer/master/install.sh | bash
-        ```
-        *(This script automatically downloads the required rish and dex files and configures them for Termux)*
-    *   **Step D: Authorize Termux**
-        Go back to the **Shizuku app** -> **Authorized applications** and toggle **ON** for Termux.
-    *   **Step E: Verify**
-        In Termux, type `rish`. If it asks for permission and then shows a shell prompt (`$`), you are ready! Type `exit` to return to VoidClaw.
+        Shizuku provides a special way for Termux to use its service. Follow these exact steps:
+        1.  In the **Shizuku app**, tap **"Use Shizuku in terminal apps"** -> **"Export files"**.
+        2.  Save the files into a folder named **"Shizuku"** in your phone's Internal Storage.
+        3.  Open Termux and run these commands to import the files:
+            ```bash
+            # Grant storage permission to Termux
+            termux-setup-storage
+            
+            # Create the local bin folder and copy the exported files
+            mkdir -p $PREFIX/bin
+            cp /sdcard/Shizuku/rish $PREFIX/bin/rish
+            cp /sdcard/Shizuku/rish_shizuku.dex $PREFIX/bin/rish_shizuku.dex
+            chmod +x $PREFIX/bin/rish
+            ```
+    *   **Step D: Verify**
+        In Termux, type `rish`. If it shows a shell prompt (`$`) without errors, you are ready! Type `exit` to return to VoidClaw.
+        *(Note: Termux does NOT need to be toggled in 'Authorized applications' when using this method)*
 
 ### 🪟 Windows Setup
 1. Double-click `windows\install.bat` and follow the wizard.
