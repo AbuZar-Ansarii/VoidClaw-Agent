@@ -1,4 +1,7 @@
 <div align="center">
+<img width="2167" height="726" alt="Voidclaw" src="https://github.com/user-attachments/assets/8627d339-e841-4364-bbd9-c31552080522" />
+
+  
   <h1>𒆙 VoidClaw</h1>
   <p><b>The Ultimate Evolutionary, Cross-Platform Autonomous AI Command Center</b></p>
   <p>
