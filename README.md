@@ -70,10 +70,11 @@ VoidClaw is designed to be **100% portable**.
     *   **Step B: Start Shizuku Service**
         Open the Shizuku app and start the service (usually via **Wireless Debugging** in Android Developer Options). Follow the in-app instructions.
     *   **Step C: Set up `rish` in Termux**
-        Once Shizuku is "Running", open Termux and run this exact command:
+        Once Shizuku is "Running", open Termux and run this automated installer:
         ```bash
-        curl -sL https://raw.githubusercontent.com/RikkaApps/Shizuku-API/master/rish/rish.sh > /data/data/com.termux/files/usr/bin/rish && chmod +x /data/data/com.termux/files/usr/bin/rish
+        curl -sL https://raw.githubusercontent.com/merbah3266/rish_installer/master/install.sh | bash
         ```
+        *(This script automatically downloads the required rish and dex files and configures them for Termux)*
     *   **Step D: Authorize Termux**
         Go back to the **Shizuku app** -> **Authorized applications** and toggle **ON** for Termux.
     *   **Step E: Verify**
