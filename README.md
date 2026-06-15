@@ -85,7 +85,12 @@ VoidClaw is designed to be **100% portable**.
             chmod +x $PREFIX/bin/rish
             ```
     *   **Step D: Verify**
-        In Termux, type `rish`. If it shows a shell prompt (`$`) without errors, you are ready! Type `exit` to return to VoidClaw.
+        In Termux, type:
+        ```bash
+        export RISH_APPLICATION_ID="com.termux"
+        rish
+        ```
+        If it shows a shell prompt (`$`) without errors, you are ready! Type `exit` to return to VoidClaw.
         *(Note: Termux does NOT need to be toggled in 'Authorized applications' when using this method)*
 
 ### 🪟 Windows Setup

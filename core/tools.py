@@ -76,9 +76,13 @@ class ToolManager:
 
         final_cmd = cmd_map[action]
         try:
+            # Set required environment variable for rish
+            env = os.environ.copy()
+            env["RISH_APPLICATION_ID"] = "com.termux"
+
             # Execute via sh rish to avoid 'Exec format error' on some environments
             # This ensures the shell script is interpreted correctly even if shebang issues exist
-            result = subprocess.run(["sh", rish_path, "-c", final_cmd], capture_output=True, text=True, timeout=15)
+            result = subprocess.run(["sh", rish_path, "-c", final_cmd], capture_output=True, text=True, timeout=15, env=env)
             
             if result.returncode == 0:
                 return f"Success: Action '{action}' executed."
