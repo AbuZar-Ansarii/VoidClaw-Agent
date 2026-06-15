@@ -315,6 +315,23 @@ Respond normally for final answers.
         with open(log_file, 'a', encoding='utf-8') as f:
             f.write(f"### [{timestamp}] {role}\n{message}\n\n")
 
+    def _parse_json(self, response):
+        """Helper to extract and parse JSON from LLM responses, even if wrapped in markdown."""
+        try:
+            # Try direct parse
+            return json.loads(response)
+        except:
+            # Look for JSON blocks
+            if "```json" in response:
+                content = response.split("```json")[1].split("```")[0].strip()
+                try: return json.loads(content)
+                except: pass
+            elif "```" in response:
+                content = response.split("```")[1].split("```")[0].strip()
+                try: return json.loads(content)
+                except: pass
+        return None
+
     async def process_message(self, user_input, source="TERM"):
         prefix = "👤 YOU" if source == "TERM" else f"👤 YOU ({source})"
         context_history = []
@@ -332,29 +349,29 @@ Respond normally for final answers.
         
         for _ in range(5):
             response = await self.model.generate_response(context, self.system_prompt)
-            try:
-                tool_call = json.loads(response)
-                if isinstance(tool_call, dict) and "tool" in tool_call:
-                    thought = tool_call.get('thought', 'Processing...')
-                    
-                    print(f"\n{self.ORANGE}{self.BOLD}💭 THOUGHT{self.RESET} {self.DIM}»{self.RESET} {thought}")
-                    print(f"{self.AMBER}{self.BOLD}🛠  ACTION{self.RESET}  {self.DIM}»{self.RESET} {tool_call['tool']}")
-                    
-                    observation = self.tools.execute_tool(tool_call['tool'], tool_call['args'])
-                    self.tool_usage[tool_call['tool']] = self.tool_usage.get(tool_call['tool'], 0) + 1
-                    
-                    if tool_call['tool'] == 'update_config' and 'Success' in observation:
-                        self.reload_config()
-                    
-                    print(f"{self.GREEN}{self.BOLD}👁  OBSERVE{self.RESET} {self.DIM}»{self.RESET} Task Success")
-                    
-                    self.log_chat("VOIDCLAW_THOUGHT", thought)
-                    self.log_chat("VOIDCLAW_ACTION", f"Tool: {tool_call['tool']}")
-                    self.log_chat("OBSERVATION", observation)
-                    
-                    context += f"\nAgent Thought: {thought}\nObservation from {tool_call['tool']}: {observation}"
-                    continue
-            except:
+            tool_call = self._parse_json(response)
+            
+            if tool_call and isinstance(tool_call, dict) and "tool" in tool_call:
+                thought = tool_call.get('thought', 'Processing...')
+                
+                print(f"\n{self.ORANGE}{self.BOLD}💭 THOUGHT{self.RESET} {self.DIM}»{self.RESET} {thought}")
+                print(f"{self.AMBER}{self.BOLD}🛠  ACTION{self.RESET}  {self.DIM}»{self.RESET} {tool_call['tool']}")
+                
+                observation = self.tools.execute_tool(tool_call['tool'], tool_call['args'])
+                self.tool_usage[tool_call['tool']] = self.tool_usage.get(tool_call['tool'], 0) + 1
+                
+                if tool_call['tool'] == 'update_config' and 'Success' in observation:
+                    self.reload_config()
+                
+                print(f"{self.GREEN}{self.BOLD}👁  OBSERVE{self.RESET} {self.DIM}»{self.RESET} Task Success")
+                
+                self.log_chat("VOIDCLAW_THOUGHT", thought)
+                self.log_chat("VOIDCLAW_ACTION", f"Tool: {tool_call['tool']}")
+                self.log_chat("OBSERVATION", observation)
+                
+                context += f"\nAgent Thought: {thought}\nObservation from {tool_call['tool']}: {observation}"
+                continue
+            else:
                 # FINAL ANSWER
                 if source == "AUTO":
                     print(f"\n{self.ORANGE}{self.BOLD}📡 PROACTIVE BROADCAST{self.RESET} {self.DIM}»{self.RESET} {response}")
@@ -376,25 +393,25 @@ Respond normally for final answers.
         final_text = ""
         for _ in range(5):
             response = await self.model.generate_response(context, self.system_prompt)
-            try:
-                tool_call = json.loads(response)
-                if isinstance(tool_call, dict) and "tool" in tool_call:
-                    thought = tool_call.get('thought', 'Thinking...')
-                    
-                    print(f"\n{self.ORANGE}{self.BOLD}💭 THOUGHT (WEB){self.RESET} {self.DIM}»{self.RESET} {thought}")
-                    print(f"{self.AMBER}{self.BOLD}🛠  ACTION (WEB){self.RESET}  {self.DIM}»{self.RESET} {tool_call['tool']}")
-                    
-                    yield f"THOUGHT:{thought} | Executing {tool_call['tool']}..."
-                    observation = self.tools.execute_tool(tool_call['tool'], tool_call['args'])
-                    print(f"{self.GREEN}{self.BOLD}👁  OBSERVE (WEB){self.RESET} {self.DIM}»{self.RESET} Task Success")
-                    
-                    self.log_chat("VOIDCLAW_THOUGHT", thought)
-                    self.log_chat("VOIDCLAW_ACTION", f"Tool: {tool_call['tool']}")
-                    self.log_chat("OBSERVATION", observation)
-                    
-                    context += f"\nAgent Thought: {thought}\nObservation: {observation}"
-                    continue
-            except:
+            tool_call = self._parse_json(response)
+            
+            if tool_call and isinstance(tool_call, dict) and "tool" in tool_call:
+                thought = tool_call.get('thought', 'Thinking...')
+                
+                print(f"\n{self.ORANGE}{self.BOLD}💭 THOUGHT (WEB){self.RESET} {self.DIM}»{self.RESET} {thought}")
+                print(f"{self.AMBER}{self.BOLD}🛠  ACTION (WEB){self.RESET}  {self.DIM}»{self.RESET} {tool_call['tool']}")
+                
+                yield f"THOUGHT:{thought} | Executing {tool_call['tool']}..."
+                observation = self.tools.execute_tool(tool_call['tool'], tool_call['args'])
+                print(f"{self.GREEN}{self.BOLD}👁  OBSERVE (WEB){self.RESET} {self.DIM}»{self.RESET} Task Success")
+                
+                self.log_chat("VOIDCLAW_THOUGHT", thought)
+                self.log_chat("VOIDCLAW_ACTION", f"Tool: {tool_call['tool']}")
+                self.log_chat("OBSERVATION", observation)
+                
+                context += f"\nAgent Thought: {thought}\nObservation: {observation}"
+                continue
+            else:
                 print(f"\n{self.ORANGE}{self.BOLD}{self.LOGO}   VOIDCLAW (WEB){self.RESET} {self.DIM}»{self.RESET} Streaming response...")
                 yield "START_STREAM"
                 async for chunk in self.model.generate_stream(context, self.system_prompt):
