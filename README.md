@@ -1,59 +1,50 @@
 <div align="center">
 
-<!-- Dark Gradient Banner with Yellow/Orange -->
-<img width="100%" height="auto" alt="Voidclaw Banner" src="https://capsule-render.vercel.app/api?type=waving&color=0:0a0a0a,100:FF8C00&height=200&section=header&text=VoidClaw&fontSize=60&fontColor=FFD700&animation=fadeIn&fontAlignY=38&desc=Autonomous%20AI%20Command%20Center&descAlignY=55&descSize=18&descColor=FFA500" />
+<!-- Professional Dark Gradient Banner -->
+<img width="100%" height="auto" alt="VoidClaw Banner" src="https://capsule-render.vercel.app/api?type=waving&color=0:0a0a0a,100:8B6914&height=180&section=header&text=VoidClaw&fontSize=52&fontColor=E8B81A&animation=fadeIn&fontAlignY=38&desc=Autonomous%20AI%20Command%20Center&descAlignY=55&descSize=16&descColor=C68B1E" />
 
-<!-- Main Logo/Header Image with Fire Effect -->
-<img width="2167" height="400" alt="VoidClaw" src="https://github.com/user-attachments/assets/8627d339-e841-4364-bbd9-c31552080522" />
+<!-- Main Logo -->
+<img width="80%" alt="VoidClaw" src="https://github.com/user-attachments/assets/8627d339-e841-4364-bbd9-c31552080522" />
 
-<!-- Glowing Title - Yellow/Orange Theme -->
+<!-- Clean Title -->
 <h1>
-  <img src="https://readme-typing-svg.demolab.com?font=Orbitron&weight=800&size=45&duration=3000&pause=500&color=F4A300&center=true&vCenter=true&width=700&height=80&lines=%F0%9D%98%86+VOIDCLAW+%F0%9D%98%86;DARK+FLAME+CORE;AUTONOMOUS+INTELLIGENCE;EVOLUTIONARY+SYSTEM" alt="Typing SVG" />
+  <img src="https://readme-typing-svg.demolab.com?font=Inter&weight=600&size=36&duration=2000&pause=500&color=E8B81A&center=true&vCenter=true&width=550&height=60&lines=VOIDCLAW;AUTONOMOUS+AI+CORE;EVOLUTIONARY+SYSTEM" alt="Typing SVG" />
 </h1>
 
-<!-- Subtitle with Fire Neon Effect -->
+<!-- Subtitle -->
 <p align="center">
-  <samp>
-    <b>🔥 THE ULTIMATE EVOLUTIONARY, CROSS-PLATFORM AUTONOMOUS AI COMMAND CENTER 🔥</b>
-  </samp>
+  <b>The Ultimate Evolutionary, Cross-Platform Autonomous AI Command Center</b>
 </p>
 
 <br/>
 
-<!-- Animated Badges - Dark Theme -->
+<!-- Professional Badges -->
 <p align="center">
-  <img src="https://img.shields.io/badge/Python-3.10%2B-000000?style=for-the-badge&logo=python&logoColor=FFD700&labelColor=1a1a1a&color=FF8C00" />
-  <img src="https://img.shields.io/badge/Platform-Universal-000000?style=for-the-badge&logo=matrix&logoColor=FFD700&labelColor=1a1a1a&color=FF8C00" />
-  <img src="https://img.shields.io/badge/UI-Dark%20Glass-000000?style=for-the-badge&logo=figma&logoColor=FFD700&labelColor=1a1a1a&color=FF8C00" />
-  <img src="https://img.shields.io/badge/Control-Shizuku-000000?style=for-the-badge&logo=android&logoColor=FFD700&labelColor=1a1a1a&color=FF8C00" />
+  <img src="https://img.shields.io/badge/Python-3.10%2B-1a1a1a?style=flat-square&logo=python&logoColor=E8B81A&labelColor=0a0a0a" />
+  <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20Mac%20%7C%20Linux%20%7C%20Android-1a1a1a?style=flat-square&logo=matrix&logoColor=E8B81A&labelColor=0a0a0a" />
+  <img src="https://img.shields.io/badge/UI-Glassmorphism-1a1a1a?style=flat-square&logo=figma&logoColor=E8B81A&labelColor=0a0a0a" />
+  <img src="https://img.shields.io/badge/Control-Shizuku%20Integrated-1a1a1a?style=flat-square&logo=android&logoColor=E8B81A&labelColor=0a0a0a" />
 </p>
 
-<!-- Advanced Badges Row - Yellow/Orange Theme -->
+<!-- Tech Stack Badges -->
 <p align="center">
-  <img src="https://img.shields.io/badge/🤖_AI_Framework-LangGraph-FF8C00?style=flat-square&logo=ai&logoColor=FFD700&color=0a0a0a" />
-  <img src="https://img.shields.io/badge/🧠_Neural_Core-Transformers-FFA500?style=flat-square&color=0a0a0a" />
-  <img src="https://img.shields.io/badge/🛡️_Security-Zero_Trust-FF6600?style=flat-square&color=0a0a0a" />
-  <img src="https://img.shields.io/badge/⚡_Performance-Overdrive-FFD700?style=flat-square&color=0a0a0a" />
-  <img src="https://img.shields.io/badge/🌙_Theme-Void_Dark-FF8C00?style=flat-square&color=0a0a0a" />
+  <img src="https://img.shields.io/badge/Framework-LangGraph-1a1a1a?style=flat-square&logoColor=E8B81A&labelColor=0a0a0a" />
+  <img src="https://img.shields.io/badge/Architecture-Transformer-1a1a1a?style=flat-square&labelColor=0a0a0a" />
+  <img src="https://img.shields.io/badge/Security-Zero%20Trust-1a1a1a?style=flat-square&labelColor=0a0a0a" />
+  <img src="https://img.shields.io/badge/Deployment-Cross%20Platform-1a1a1a?style=flat-square&labelColor=0a0a0a" />
 </p>
 
-<!-- Stats Row - Fire Style -->
+<!-- Repository Stats -->
 <p align="center">
-  <img src="https://img.shields.io/github/stars/yourusername/VoidClaw?style=social&logo=github&labelColor=0a0a0a&color=FFD700" />
-  <img src="https://img.shields.io/github/forks/yourusername/VoidClaw?style=social&logo=github&labelColor=0a0a0a&color=FFA500" />
-  <img src="https://img.shields.io/github/license/yourusername/VoidClaw?style=flat-square&color=FF8C00&labelColor=0a0a0a" />
-  <img src="https://img.shields.io/badge/PRs-BLAZING-FF6600?style=flat-square&logo=github&labelColor=0a0a0a" />
+  <img src="https://img.shields.io/github/stars/yourusername/VoidClaw?style=flat-square&logo=github&labelColor=0a0a0a&color=E8B81A" />
+  <img src="https://img.shields.io/github/forks/yourusername/VoidClaw?style=flat-square&logo=github&labelColor=0a0a0a&color=E8B81A" />
+  <img src="https://img.shields.io/github/license/yourusername/VoidClaw?style=flat-square&labelColor=0a0a0a&color=E8B81A" />
 </p>
 
-<!-- Fire Divider -->
-<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%">
+<!-- Clean Divider -->
+<hr width="60%">
 
 </div>
----
-
-<img width="1672" height="941" alt="voidclaw " src="https://github.com/user-attachments/assets/f1275879-da03-4b29-be83-aac846e3aac2" />
-
-
 ## 📖 Overview
 
 VoidClaw is a highly advanced, local-first AI agent framework. It acts as a continuous autonomous assistant that learns your preferences over time, interacts with your local filesystem, scrapes the web, and proactively manages your digital life. Designed for portability, it runs seamlessly on high-end PCs and Android phones alike, turning your device into an autonomous mission hub.
