@@ -20,7 +20,7 @@ VoidClaw is a highly advanced, local-first AI agent framework. It acts as a cont
 
 ## 🌟 Major Highlights
 
-*   **📱 Android System Control (Shizuku):** VoidClaw is now integrated with **Shizuku**. It can autonomously open apps, navigate your phone (Home/Back), adjust volume, and execute raw `adb shell` commands directly from your chat.
+*   **📱 Android System Control (Shizuku):** VoidClaw is now integrated with **Shizuku**. It can autonomously open apps, navigate your phone, toggle system settings (WiFi, Bluetooth, Dark Mode), simulate precision touch gestures (Tap, Swipe), and capture screenshots directly from your chat.
 *   **⏰ 24/7 Proactive Autonomy:** Set reminders, briefings, or complex tasks in seconds or minutes. VoidClaw proactively "messages" you across all channels with sound notifications and unique UI transmissions when a task triggers.
 *   **🧠 Evolutionary Memory:** Automatically deduces and records your preferences, workflows, and expertise in a permanent neural vault to adapt its personality and assistance to you.
 *   **🌐 Tri-Channel Interface:** Seamlessly switch between a premium **Glassmorphism Web UI**, remote control via **Telegram**, or a high-resolution **Terminal Dashboard**. All channels are synchronized in real-time.
@@ -33,7 +33,7 @@ VoidClaw is a highly advanced, local-first AI agent framework. It acts as a cont
 - **Mission Dashboard:** Real-time monitoring of CPU, RAM, Token usage, and active autonomous tasks.
 
 ### 🧰 The Tool Arsenal
-- **Android Control:** Launch apps (e.g., YouTube), simulate hardware buttons, and touch events via Shizuku.
+- **Advanced Android Control:** Toggle WiFi, Bluetooth, Dark Mode, and Battery Saver. Capture screenshots, simulate precision tap/swipe gestures, and type text autonomously via Shizuku.
 - **Advanced Web Tools:** Multi-stage web scraper and search with a stealth fallback system for Termux.
 - **Media Suite:** High-quality YouTube downloading (Video/Audio) and automatic media conversion.
 - **File Intelligence:** Sandboxed filesystem access and **Local RAG Semantic Search** across your workspace documents.

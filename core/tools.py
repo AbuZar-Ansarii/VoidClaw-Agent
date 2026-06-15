@@ -3,6 +3,17 @@ import shutil
 import subprocess
 from duckduckgo_search import DDGS
 
+# Production File Support
+try:
+    from pypdf import PdfReader
+except ImportError:
+    PdfReader = None
+
+try:
+    import openpyxl
+except ImportError:
+    openpyxl = None
+
 class ToolManager:
     def __init__(self, workspace_dir):
         self.workspace_dir = os.path.abspath(workspace_dir)
@@ -16,9 +27,16 @@ class ToolManager:
     def execute_tool(self, tool_name, args):
         tools = {
             "list_files": self.list_files,
+            "list_files_recursive": self.list_files_recursive,
+            "get_workspace_tree": self.get_workspace_tree,
             "read_file": self.read_file,
             "write_file": self.write_file,
             "delete_file": self.delete_file,
+            "create_directory": self.create_directory,
+            "move_file": self.move_file,
+            "rename_file": self.rename_file,
+            "read_pdf": self.read_pdf,
+            "read_excel": self.read_excel,
             "web_search": self.web_search,
             "get_memory": self.get_memory,
             "update_memory": self.update_memory,
@@ -98,6 +116,28 @@ class ToolManager:
             "brightness_set": f"settings put system screen_brightness {target}",
             "brightness_auto": "settings put system screen_brightness_mode 1",
             "brightness_manual": "settings put system screen_brightness_mode 0",
+            "wifi_on": "svc wifi enable",
+            "wifi_off": "svc wifi disable",
+            "bluetooth_on": "svc bluetooth enable",
+            "bluetooth_off": "svc bluetooth disable",
+            "dark_mode_on": "cmd uimode night yes",
+            "dark_mode_off": "cmd uimode night no",
+            "battery_saver_on": "settings put global low_power 1",
+            "battery_saver_off": "settings put global low_power 0",
+            "dnd_on": "cmd notification set_dnd on",
+            "dnd_off": "cmd notification set_dnd off",
+            "auto_rotate_on": "settings put system accelerometer_rotation 1",
+            "auto_rotate_off": "settings put system accelerometer_rotation 0",
+            "get_battery": "dumpsys battery",
+            "volume_set": f"media volume --set {target}",
+            "expand_notifications": "cmd statusbar expand-notifications",
+            "collapse_notifications": "cmd statusbar collapse",
+            "get_current_app": "dumpsys window | grep mCurrentFocus",
+            "lock": "input keyevent 26",
+            "screenshot": f"screencap -p /sdcard/voidclaw_screenshot.png",
+            "tap": f"input tap {target}",
+            "swipe": f"input swipe {target}",
+            "type_text": f"input text '{target}'",
             "raw_shell": target
         }
 
@@ -114,6 +154,24 @@ class ToolManager:
             result = subprocess.run(["sh", rish_path, "-c", final_cmd], capture_output=True, text=True, timeout=15, env=env)
             
             if result.returncode == 0:
+                if action == "screenshot":
+                    # Move from sdcard to workspace
+                    src = "/sdcard/voidclaw_screenshot.png"
+                    dest = os.path.join(self.workspace_dir, f"screenshot_{os.urandom(2).hex()}.png")
+                    # We need rish to move it because Termux might not have direct /sdcard access without setup
+                    # Actually, if termux-setup-storage is done, we can just move it.
+                    # But safer to use rish to cat it to a file in workspace
+                    move_cmd = f"cat {src} > {dest}" # This is wrong, dest is local path. 
+                    # Correct way: capture output of rish screencap or pull it.
+                    # Let's use rish to write directly to a path rish can access, then move it.
+                    # Simplified: rish -c 'screencap -p' > local_file
+                    
+                    # RE-RUN for screenshot to capture stdout directly
+                    screenshot_dest = os.path.join(self.workspace_dir, f"screenshot_{os.urandom(2).hex()}.png")
+                    with open(screenshot_dest, "wb") as f:
+                        subprocess.run(["sh", rish_path, "-c", "screencap -p"], stdout=f, env=env, timeout=20)
+                    return f"Success: Screenshot saved to workspace as {os.path.basename(screenshot_dest)}"
+
                 return f"Success: Action '{action}' executed."
             else:
                 stderr = result.stderr.strip()
@@ -164,16 +222,77 @@ class ToolManager:
         except Exception as e:
             return str(e)
 
+    def list_files_recursive(self):
+        try:
+            files = []
+            for root, _, filenames in os.walk(self.workspace_dir):
+                for filename in filenames:
+                    rel_path = os.path.relpath(os.path.join(root, filename), self.workspace_dir)
+                    files.append(rel_path)
+            return "\n".join(files) or "Workspace is empty."
+        except Exception as e:
+            return str(e)
+
+    def get_workspace_tree(self):
+        try:
+            tree = []
+            for root, dirs, files in os.walk(self.workspace_dir):
+                level = root.replace(self.workspace_dir, '').count(os.sep)
+                indent = '  ' * level
+                tree.append(f"{indent}{os.path.basename(root)}/")
+                sub_indent = '  ' * (level + 1)
+                for f in files:
+                    tree.append(f"{sub_indent}{f}")
+            return "\n".join(tree)
+        except Exception as e:
+            return str(e)
+
     def read_file(self, filename):
         try:
-            with open(self._safe_path(filename), 'r', encoding='utf-8') as f:
+            path = self._safe_path(filename)
+            ext = os.path.splitext(filename)[1].lower()
+            
+            if ext == '.pdf':
+                return self.read_pdf(filename)
+            elif ext in ['.xlsx', '.xls']:
+                return self.read_excel(filename)
+                
+            with open(path, 'r', encoding='utf-8') as f:
                 return f.read()
         except Exception as e:
             return str(e)
 
+    def read_pdf(self, filename):
+        if not PdfReader:
+            return "Error: pypdf library not installed. PDF support is currently disabled."
+        try:
+            reader = PdfReader(self._safe_path(filename))
+            text = ""
+            for page in reader.pages:
+                text += page.extract_text() + "\n"
+            return text[:10000] # Cap output
+        except Exception as e:
+            return f"Error reading PDF: {str(e)}"
+
+    def read_excel(self, filename):
+        if not openpyxl:
+            return "Error: openpyxl library not installed. Excel support is currently disabled."
+        try:
+            wb = openpyxl.load_workbook(self._safe_path(filename), data_only=True)
+            output = ""
+            for sheet in wb.worksheets:
+                output += f"--- Sheet: {sheet.title} ---\n"
+                for row in sheet.iter_rows(values_only=True):
+                    output += "\t".join([str(cell) if cell is not None else "" for cell in row]) + "\n"
+            return output[:10000] # Cap output
+        except Exception as e:
+            return f"Error reading Excel: {str(e)}"
+
     def write_file(self, filename, content):
         try:
-            with open(self._safe_path(filename), 'w', encoding='utf-8') as f:
+            path = self._safe_path(filename)
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            with open(path, 'w', encoding='utf-8') as f:
                 f.write(content)
             return f"File {filename} written successfully."
         except Exception as e:
@@ -181,10 +300,35 @@ class ToolManager:
 
     def delete_file(self, filename):
         try:
-            os.remove(self._safe_path(filename))
+            path = self._safe_path(filename)
+            if os.path.isdir(path):
+                shutil.rmtree(path)
+                return f"Directory {filename} and all its contents deleted."
+            os.remove(path)
             return f"File {filename} deleted."
         except Exception as e:
             return str(e)
+
+    def create_directory(self, path):
+        try:
+            full_path = self._safe_path(path)
+            os.makedirs(full_path, exist_ok=True)
+            return f"Directory '{path}' created successfully."
+        except Exception as e:
+            return str(e)
+
+    def move_file(self, src, dest):
+        try:
+            src_path = self._safe_path(src)
+            dest_path = self._safe_path(dest)
+            os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+            shutil.move(src_path, dest_path)
+            return f"Moved {src} to {dest}."
+        except Exception as e:
+            return str(e)
+
+    def rename_file(self, old_name, new_name):
+        return self.move_file(old_name, new_name)
 
     def web_search(self, query):
         is_termux = os.path.exists('/data/data/com.termux')

@@ -277,7 +277,7 @@ Respond ONLY in JSON if you need a tool:
 {{"thought": "reasoning", "tool": "tool_name", "args": {{}}}}
 
 Tools:
-- list_files, read_file, write_file, delete_file
+- list_files, list_files_recursive, get_workspace_tree, read_file (Supports .txt, .md, .py, .pdf, .xlsx), write_file, delete_file, create_directory, move_file, rename_file
 - web_search: query
 - update_user_profile: info (Save facts about the user here)
 - update_config: key, value
@@ -294,17 +294,18 @@ Tools:
 - remove_all_tasks: (Cancel all active background tasks)
 - remind_me: message, time_args (Shortcut to schedule a reminder)
 - stop_reminders: keyword (Remove a specific reminder)
-- android_control: action (open_app, home, back, media_play_pause, volume_up, volume_down, screen_off, flashlight_on, flashlight_off, brightness_set, brightness_auto, brightness_manual, raw_shell), target (package name for open_app, brightness value 0-255 for brightness_set, or raw shell command)
+- android_control: action (open_app, home, back, media_play_pause, volume_up, volume_down, volume_set, screen_off, flashlight_on, flashlight_off, brightness_set, brightness_auto, brightness_manual, wifi_on, wifi_off, bluetooth_on, bluetooth_off, dark_mode_on, dark_mode_off, battery_saver_on, battery_saver_off, dnd_on, dnd_off, auto_rotate_on, auto_rotate_off, get_battery, expand_notifications, collapse_notifications, get_current_app, lock, screenshot, tap, swipe, type_text, raw_shell), target (package name for open_app, coordinates 'x y' for tap, 'x1 y1 x2 y2' for swipe, text for type_text, brightness/volume value 0-255/0-15, or raw shell command)
 
 Autonomous Operation:
 You can schedule yourself to perform tasks 24/7. 
 Example: Use 'schedule_task' with 'interval' and '1m' to remind the user of something every minute.
-Example: Use 'schedule_task' with 'interval' and '30s' for high-frequency reminders.
-Example: Use 'schedule_task' with 'cron' and '0 8 * * *' to perform a daily morning briefing.
-Example: Use 'android_control' with 'open_app' and 'com.google.android.youtube' to open YouTube on the user's phone.
-Example: Use 'android_control' with 'flashlight_on' to turn on the phone's flashlight.
-Example: Use 'android_control' with 'brightness_set' and '150' to set screen brightness.
-Example: Use 'android_control' with 'raw_shell' and 'input tap 500 500' to simulate a touch at coordinates (500, 500).
+Example: Use 'android_control' with 'open_app' and 'com.google.android.youtube' to open YouTube.
+Example: Use 'android_control' with 'dark_mode_on' to switch to dark theme.
+Example: Use 'android_control' with 'wifi_off' to save battery when the user is sleeping.
+Example: Use 'android_control' with 'get_battery' to check current power levels.
+Example: Use 'android_control' with 'volume_set' and '10' to set media volume.
+Example: Use 'android_control' with 'screenshot' to capture the phone screen.
+Example: Use 'android_control' with 'type_text' and 'Hello World' to type into a field.
 When a scheduled task triggers, you will receive a message from 'SYSTEM' and you should execute the instruction autonomously.
 You MUST provide a clear, final answer to the user when a task triggers. For a reminder, simply state the reminder message.
 
