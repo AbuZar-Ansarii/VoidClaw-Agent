@@ -45,6 +45,41 @@
 
 VoidClaw is a highly advanced, local-first AI agent framework. It acts as a continuous autonomous assistant that learns your preferences over time, interacts with your local filesystem, scrapes the web, and proactively manages your digital life. Designed for portability, it runs seamlessly on high-end PCs and Android phones alike, turning your device into an autonomous mission hub.
 
+## 🗂️ Project Structure
+
+```text
+voidclaw/
+├── core/                   # Core Brain (Agent, Models, Tools)
+├── common/                 # Neural Vault (Memory, Logs, Configs)
+├── linux/ | mac/ | termux/ # Cross-Platform Launchers
+├── windows/                # Windows Execution Suite
+├── workspace/              # Secure File Sandbox
+└── requirements.txt        # System Dependencies
+```
+
+## ⚡ Lightweight & Mini-Requirements
+
+VoidClaw is engineered to be **ultra-lightweight**. While it can harness the power of massive models, the core agent itself consumes minimal resources.
+
+*   **Mini-Requirement:** Can run on a **$10-15 Raspberry Pi Zero 2 W or Pi 3/4/5** with as little as **512MB RAM** (when using Cloud APIs like Gemini or OpenRouter).
+*   **Production Ready:** Efficiently manages background tasks without battery drain on mobile devices.
+
+## 📋 System Requirements
+
+| Platform | Minimum Requirements | Recommended |
+| :--- | :--- | :--- |
+| **Android** | Android 9+, 2GB RAM, Termux | Android 12+, 4GB RAM, Shizuku |
+| **Windows** | Windows 10/11, Python 3.10+ | 8GB RAM (for local Ollama) |
+| **Linux / Pi** | Debian/Ubuntu/Raspbian, 1GB RAM | Raspberry Pi 4/5 (4GB RAM) |
+| **macOS** | macOS Monterey+, Intel/Apple Silicon | M1/M2/M3 Chip for local LLMs |
+
+## 🛡️ Security & Privacy
+
+*   **Local-First Architecture:** Your "Neural Vault" (memories, logs, and preferences) is stored **strictly on your device** in the `common/` folder. No data is ever sent to a central server.
+*   **Workspace Sandboxing:** All filesystem tools are hardware-locked to the `workspace/` directory. The agent cannot modify system files outside this folder without explicit raw shell permission.
+*   **Privacy by Design:** Zero telemetry. No tracking. No cloud-based logging. You own your data.
+*   **Credential Safety:** API keys and tokens are stored locally in `common/config.yaml` and are never exposed in logs.
+
 ## 🌟 Major Highlights
 
 *   **📱 Android System Control (Shizuku):** VoidClaw is now integrated with **Shizuku**. It can autonomously open apps, navigate your phone, toggle system settings (WiFi, Bluetooth, Dark Mode), simulate precision touch gestures (Tap, Swipe), and capture screenshots directly from your chat.
@@ -115,20 +150,6 @@ VoidClaw is designed to be **100% portable**.
 ### 🍎 macOS / 🐧 Linux Setup
 1. Run: `chmod +x linux/install.sh linux/run.sh && ./linux/install.sh`
 2. To launch: `./linux/run.sh`
-
----
-
-## 🗂️ Project Structure
-
-```text
-voidclaw/
-├── core/                   # Core Brain (Agent, Models, Tools)
-├── common/                 # Neural Vault (Memory, Logs, Configs)
-├── linux/ | mac/ | termux/ # Cross-Platform Launchers
-├── windows/                # Windows Execution Suite
-├── workspace/              # Secure File Sandbox
-└── requirements.txt        # System Dependencies
-```
 
 ---
 <div align="center">
