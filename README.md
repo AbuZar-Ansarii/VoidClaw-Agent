@@ -146,7 +146,7 @@ VoidClaw is designed to be **100% portable**.
 ### 🍎 macOS / 🐧 Linux Setup
 1. Clone Repo: `git clone https://github.com/AbuZar-Ansarii/VoidClaw-Agent.git`
 2. cd `VoidClaw-Agent`
-3. Based on System(Mac/Linux) Run: `chmod +x linux/install.sh linux/run.sh && ./linux/install.sh`.               `chmod +x mac/install.sh mac/run.sh && ./mac/install.sh`
+3. Based on System(Mac/Linux) Run: `chmod +x linux/install.sh linux/run.sh && ./linux/install.sh`.                                                             `chmod +x mac/install.sh mac/run.sh && ./mac/install.sh`
 4. Based on System(Mac/Linux) To launch: `./linux/run.sh` `./mac/run.sh`
 
 ---
