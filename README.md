@@ -157,7 +157,7 @@ cd VoidClaw-Agent
 git clone https://github.com/AbuZar-Ansarii/VoidClaw-Agent.git
 ```
 5. Double-click `windows\install.bat` and follow the wizard.
-6. 
+   
 7. Double-click `windows\run.bat` to launch.
 
 ### 🍎 macOS / 🐧 Linux Setup
