@@ -5,7 +5,7 @@
 
 <!-- Clean Title -->
 <h1>
-  <img src="https://readme-typing-svg.demolab.com?font=Inter&weight=600&size=36&duration=2000&pause=500&color=E8B81A&center=true&vCenter=true&width=550&height=60&lines=VOIDCLAW;AUTONOMOUS+AI+CORE;EVOLUTIONARY+AGENT;SELF+EVOLVING+AI+AGENT;FOR;WINDOWS;MAC;LINUX;ANDROID;BY;MOHD+ABUZAR" alt="Typing SVG" />
+  <img src="https://readme-typing-svg.demolab.com?font=Inter&weight=600&size=36&duration=2000&pause=500&color=E8B81A&center=true&vCenter=true&width=550&height=60&lines=VOIDCLAW;AUTONOMOUS+AI+CORE;SELF+EVOLVING+AI+AGENT;FOR;WINDOWS;MAC;LINUX;ANDROID;BY;MOHD+ABUZAR" alt="Typing SVG" />
 </h1>
 
 <!-- Subtitle -->
