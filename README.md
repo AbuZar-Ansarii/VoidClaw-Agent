@@ -152,14 +152,19 @@ cd VoidClaw-Agent
         *(Note: Termux does NOT need to be toggled in 'Authorized applications' when using this method)*
 
 ### 🪟 Windows Setup
-1. Clone Repo: `git clone https://github.com/AbuZar-Ansarii/VoidClaw-Agent.git`
-2. Double-click `windows\install.bat` and follow the wizard.
-3. Double-click `windows\run.bat` to launch.
+1. Clone Repo:
+```
+git clone https://github.com/AbuZar-Ansarii/VoidClaw-Agent.git
+```
+5. Double-click `windows\install.bat` and follow the wizard.
+6. 
+7. Double-click `windows\run.bat` to launch.
 
 ### 🍎 macOS / 🐧 Linux Setup
+
 Clone Repo: 
 ```
-    git clone https://github.com/AbuZar-Ansarii/VoidClaw-Agent.git
+git clone https://github.com/AbuZar-Ansarii/VoidClaw-Agent.git
 ```
 ```
  cd VoidClaw-Agent
