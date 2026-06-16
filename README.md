@@ -97,6 +97,7 @@ VoidClaw is engineered to be **ultra-lightweight**. While it can harness the pow
 - **Smart Scheduler:** Human-friendly reminder system ("remind me every 30s") and professional Cron support.
 
 ### 🖥️ Premium Web Command Center
+- **Smart Connectivity:** Automatically detects and resolves port conflicts (e.g., macOS AirPlay conflict) by finding the next available port.
 - **Mobile-Responsive Design:** Fully optimized for Android browsers with a slide-out Mission Hub and floating input.
 - **Operational Control:** Mid-response interruption (Stop Button) and secure document attachments.
 - **Memory Vault:** Browse, search, and instantly restore previous neural logs from the sidebar.
