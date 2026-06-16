@@ -139,12 +139,15 @@ VoidClaw is designed to be **100% portable**.
         *(Note: Termux does NOT need to be toggled in 'Authorized applications' when using this method)*
 
 ### 🪟 Windows Setup
-1. Double-click `windows\install.bat` and follow the wizard.
-2. Double-click `windows\run.bat` to launch.
+1. Clone Repo: `git clone https://github.com/AbuZar-Ansarii/VoidClaw-Agent.git`
+2. Double-click `windows\install.bat` and follow the wizard.
+3. Double-click `windows\run.bat` to launch.
 
 ### 🍎 macOS / 🐧 Linux Setup
-1. Run: `chmod +x linux/install.sh linux/run.sh && ./linux/install.sh`
-2. To launch: `./linux/run.sh`
+1. Clone Repo: `git clone https://github.com/AbuZar-Ansarii/VoidClaw-Agent.git`
+2. cd `VoidClaw-Agent`
+3. Based on System(Mac/Linux) Run: `chmod +x linux/install.sh linux/run.sh && ./linux/install.sh`. `chmod +x mac/install.sh mac/run.sh && ./mac/install.sh`
+4. Based on System(Mac/Linux) To launch: `./linux/run.sh` `./mac/run.sh`
 
 ---
 
