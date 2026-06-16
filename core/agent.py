@@ -6,16 +6,6 @@ import asyncio
 import threading
 import uuid
 import sys
-import socket
-# Global hack to force IPv4 if IPv6 causes issues (Common on Jio/Airtel)
-try:
-    orig_getaddrinfo = socket.getaddrinfo
-    def patched_getaddrinfo(*args, **kwargs):
-        responses = orig_getaddrinfo(*args, **kwargs)
-        return [res for res in responses if res[0] == socket.AF_INET]
-    socket.getaddrinfo = patched_getaddrinfo
-except: pass
-
 try:
     import psutil
 except ImportError:
@@ -515,52 +505,27 @@ async def main():
     # Telegram Setup
     token = config.get('telegram_token')
     if token and token != "YOUR_TELEGRAM_BOT_TOKEN":
-        print(f"\033[38;5;214m[SYSTEM]\033[0m Initializing Telegram Secure Link...")
-        
-        async def handle_tg(update: Update, context: ContextTypes.DEFAULT_TYPE):
-            if not update.message or not update.message.text: return
-            agent.last_tg_chat_id = update.effective_chat.id
-            print(f"\n\033[38;5;214m[TELEGRAM]\033[0m Incoming transmission from {update.effective_user.first_name}...")
-            reply = await agent.process_message(update.message.text, source="TG")
-            await update.message.reply_text(reply)
+        try:
+            application = ApplicationBuilder().token(token).build()
+            agent.tg_app = application # Store app for proactive messages
             
-        # Connection Retry Loop
-        max_retries = 3
-        for attempt in range(max_retries):
-            try:
-                # Use standard ApplicationBuilder which automatically handles most environments
-                # PTB will pick up HTTPS_PROXY from environment variables if set.
-                application = ApplicationBuilder().token(token).build()
-                application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), handle_tg))
-                agent.tg_app = application
-
-                await application.initialize()
-                await application.start()
-                await application.updater.start_polling(drop_pending_updates=True)
-                print(f"\033[92m[+] Telegram Bot active.\033[0m")
-                break
-            except Exception as e:
-                # Cleanup partial state
-                try:
-                    if 'application' in locals():
-                        await application.shutdown()
-                except: pass
+            async def handle_tg(update: Update, context: ContextTypes.DEFAULT_TYPE):
+                if not update.message or not update.message.text: return
+                agent.last_tg_chat_id = update.effective_chat.id # Store last chat ID
+                print(f"\n\033[38;5;214m[TELEGRAM]\033[0m Incoming transmission from {update.effective_user.first_name}...")
+                reply = await agent.process_message(update.message.text, source="TG")
+                await update.message.reply_text(reply)
                 
-                error_msg = str(e)
-                if "ConnectError" in error_msg or "Timed out" in error_msg:
-                    print(f"\033[91m[!] Network Error:\033[0m Telegram is unreachable. This is often caused by ISP blocking (e.g. Jio/Airtel) or local firewall.")
-                    print(f"\033[93m[*] Hint:\033[0m Try using a VPN or setting HTTPS_PROXY environment variable.")
-                
-                if attempt < max_retries - 1:
-                    wait = (attempt + 1) * 5
-                    print(f"\033[93m[!] Retrying in {wait}s... ({attempt+1}/{max_retries})\033[0m")
-                    await asyncio.sleep(wait)
-                else:
-                    agent.tg_app = None
-                    print(f"\n\033[91m[!] Telegram Connection Timeout: {e}\033[0m")
-                    print("\033[93m[*] Switching to Terminal + Web mode only.\033[0m")
-        
-        await terminal_loop(agent)
+            application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), handle_tg))
+            await application.initialize()
+            await application.start()
+            await application.updater.start_polling()
+            print(f"\033[92m[+] Telegram Bot active.\033[0m")
+            await terminal_loop(agent)
+        except Exception as e:
+            print(f"\n\033[91m[!] Telegram Setup Failed: {e}\033[0m")
+            print("\033[93m[*] Continuing in Terminal + Web mode.\033[0m")
+            await terminal_loop(agent)
     else:
         print("\033[93m[!] Telegram token not set. Running in Terminal + Web mode.\033[0m")
         await terminal_loop(agent)
