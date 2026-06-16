@@ -157,11 +157,23 @@ cd VoidClaw-Agent
 3. Double-click `windows\run.bat` to launch.
 
 ### 🍎 macOS / 🐧 Linux Setup
-1. Clone Repo: `git clone https://github.com/AbuZar-Ansarii/VoidClaw-Agent.git`
-2. cd `VoidClaw-Agent`
-3. Based on System(Mac/Linux) Run: `chmod +x linux/install.sh linux/run.sh && ./linux/install.sh`.                                                             `chmod +x mac/install.sh mac/run.sh && ./mac/install.sh`
-4. Based on System(Mac/Linux) To launch: `./linux/run.sh` `./mac/run.sh`
-
+1. Clone Repo:
+2.  ```
+3.  git clone https://github.com/AbuZar-Ansarii/VoidClaw-Agent.git
+4.  ```
+5. cd
+6. ```
+7. VoidClaw-Agent
+8. ```
+9. Based on System(Mac/Linux) Run:
+10. ```
+    chmod +x linux/install.sh linux/run.sh && ./linux/install.sh
+11. ```
+12. `chmod +x mac/install.sh mac/run.sh && ./mac/install.sh`
+13. Based on System(Mac/Linux) To launch:
+14. ```
+15.  ./linux/run.sh` `./mac/run.sh
+16.  ```
 ---
 
 ## 📄 License
