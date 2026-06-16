@@ -163,7 +163,7 @@ def get_free_port(start_port):
     import socket
     port = start_port
     while port < start_port + 10:
-        with socket.socket(socket.socket.AF_INET, socket.SOCK_STREAM) as s:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             try:
                 s.bind(('0.0.0.0', port))
                 return port
