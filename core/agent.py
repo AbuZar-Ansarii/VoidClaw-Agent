@@ -506,7 +506,10 @@ async def main():
     token = config.get('telegram_token')
     if token and token != "YOUR_TELEGRAM_BOT_TOKEN":
         try:
-            application = ApplicationBuilder().token(token).build()
+            from telegram.request import HTTPXRequest
+            # Using very long timeouts as a robust fallback for slow handshakes
+            request = HTTPXRequest(connect_timeout=100.0, read_timeout=100.0)
+            application = ApplicationBuilder().token(token).request(request).build()
             agent.tg_app = application # Store app for proactive messages
             
             async def handle_tg(update: Update, context: ContextTypes.DEFAULT_TYPE):

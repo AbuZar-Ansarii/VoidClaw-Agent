@@ -159,34 +159,12 @@ def delete_session(filename):
         return jsonify({'message': f'Session {filename} deleted.'})
     return jsonify({'error': 'File not found'}), 404
 
-def get_free_port(start_port):
-    import socket
-    port = start_port
-    while port < start_port + 10:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            try:
-                s.bind(('0.0.0.0', port))
-                return port
-            except OSError:
-                port += 1
-    return start_port
-
 def start_web_server(agent_instance, port=5000):
     global agent
     agent = agent_instance
-    
-    # Robust port selection (Fixed for macOS AirPlay conflict)
-    final_port = get_free_port(port)
-    
-    print(f"\n\033[38;5;214m[WEB]\033[0m UI Server starting on http://localhost:{final_port} (Production Mode)")
-    
-    # Only open browser if not in Termux (to avoid error messages)
-    if not os.path.exists('/data/data/com.termux'):
-        try:
-            webbrowser.open(f"http://localhost:{final_port}")
-        except: pass
-        
-    serve(app, host='0.0.0.0', port=final_port, _quiet=True)
+    print(f"\n\033[38;5;214m[WEB]\033[0m UI Server starting on http://localhost:{port} (Production Mode)")
+    webbrowser.open(f"http://localhost:{port}")
+    serve(app, host='0.0.0.0', port=port, _quiet=True)
 
 if __name__ == '__main__':
     pass
