@@ -6,6 +6,16 @@ import asyncio
 import threading
 import uuid
 import sys
+import socket
+# Global hack to force IPv4 if IPv6 causes issues (Common on Jio/Airtel)
+try:
+    orig_getaddrinfo = socket.getaddrinfo
+    def patched_getaddrinfo(*args, **kwargs):
+        responses = orig_getaddrinfo(*args, **kwargs)
+        return [res for res in responses if res[0] == socket.AF_INET]
+    socket.getaddrinfo = patched_getaddrinfo
+except: pass
+
 try:
     import psutil
 except ImportError:
@@ -518,12 +528,9 @@ async def main():
         max_retries = 3
         for attempt in range(max_retries):
             try:
-                # Re-create application for each attempt to ensure a clean state
-                from telegram.request import HTTPXRequest
-                
-                # Increase timeouts for better reliability on all platforms
-                request = HTTPXRequest(connect_timeout=30.0, read_timeout=30.0)
-                application = ApplicationBuilder().token(token).request(request).build()
+                # Use standard ApplicationBuilder which automatically handles most environments
+                # PTB will pick up HTTPS_PROXY from environment variables if set.
+                application = ApplicationBuilder().token(token).build()
                 application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), handle_tg))
                 agent.tg_app = application
 
@@ -533,18 +540,23 @@ async def main():
                 print(f"\033[92m[+] Telegram Bot active.\033[0m")
                 break
             except Exception as e:
-                # Cleanup partial state to avoid "ExtBot not initialized" or "coroutine never awaited" warnings
+                # Cleanup partial state
                 try:
                     if 'application' in locals():
                         await application.shutdown()
                 except: pass
                 
+                error_msg = str(e)
+                if "ConnectError" in error_msg or "Timed out" in error_msg:
+                    print(f"\033[91m[!] Network Error:\033[0m Telegram is unreachable. This is often caused by ISP blocking (e.g. Jio/Airtel) or local firewall.")
+                    print(f"\033[93m[*] Hint:\033[0m Try using a VPN or setting HTTPS_PROXY environment variable.")
+                
                 if attempt < max_retries - 1:
                     wait = (attempt + 1) * 5
-                    print(f"\033[93m[!] Telegram Connection Delayed ({e}). Retrying in {wait}s... ({attempt+1}/{max_retries})\033[0m")
+                    print(f"\033[93m[!] Retrying in {wait}s... ({attempt+1}/{max_retries})\033[0m")
                     await asyncio.sleep(wait)
                 else:
-                    agent.tg_app = None # Ensure no dead reference
+                    agent.tg_app = None
                     print(f"\n\033[91m[!] Telegram Connection Timeout: {e}\033[0m")
                     print("\033[93m[*] Switching to Terminal + Web mode only.\033[0m")
         
